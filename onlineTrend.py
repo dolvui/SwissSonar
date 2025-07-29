@@ -54,28 +54,36 @@ key = secret['google_key']
 pytrends = TrendReq()
 
 def get_google_trend_score(keyword):
-    #pytrends = TrendReq(retries=3)#TrendReq(hl='en-US', tz=360)
-    kw_list = [keyword]
-    pytrends.build_payload(kw_list, cat=0, timeframe='now 7-d', geo='', gprop='')
+    try:
+        #pytrends = TrendReq(retries=3)#TrendReq(hl='en-US', tz=360)
+        kw_list = [keyword]
+        pytrends.build_payload(kw_list, cat=0, timeframe='now 7-d', geo='', gprop='')
 
-    data = pytrends.interest_over_time()
-
-    return int(data[keyword].iloc[-1])
+        data = pytrends.interest_over_time()
+        print(data)
+        return int(data[keyword].iloc[-1])
+    except Exception as e:
+        print(e)
+        return 0
 
 def youtube_search_count(query, api_key=key, max_results=1000):
-    youtube = build("youtube", "v3", developerKey=api_key)
+    try:
+        youtube = build("youtube", "v3", developerKey=api_key)
 
-    published_after = (datetime.utcnow() - timedelta(days=1)).isoformat("T") + "Z"
+        published_after = (datetime.utcnow() - timedelta(days=1)).isoformat("T") + "Z"
 
-    request = youtube.search().list(
-        part="snippet",
-        q=query,
-        type="video",
-        maxResults=max_results,
-        publishedAfter=published_after
-    )
-    response = request.execute()
-    return len(response.get("items", []))
+        request = youtube.search().list(
+            part="snippet",
+            q=query,
+            type="video",
+            maxResults=max_results,
+            publishedAfter=published_after
+        )
+        response = request.execute()
+        return len(response.get("items", []))
+    except Exception as error:
+        print(error)
+        return 0
 
 def count_reddit_mentions(keyword, subreddit="cryptocurrency", limit=1000):
     count = 0

@@ -1,6 +1,8 @@
 import sqlite3
+from datetime import datetime , timedelta
 
 conn = sqlite3.connect("crypto_tracker.db")
+conn.row_factory = sqlite3.Row
 cursor = conn.cursor()
 
 def init_db():
@@ -33,3 +35,14 @@ def insert_token(data: dict):
         data['market_cap'], data['volume_24h'], data['change_24h']
     ))
     conn.commit()
+
+def fetch_last_7_days(token_name : str):
+    seven_days_ago = datetime.now() - timedelta(days=7)
+    cursor.execute("""
+                   SELECT *
+                   FROM tokens
+                   WHERE name = ? AND timestamp >= ?
+                   ORDER BY timestamp ASC
+                   """, (token_name, seven_days_ago.isoformat()))
+    rows = cursor.fetchall()
+    return [dict(row) for row in rows]
