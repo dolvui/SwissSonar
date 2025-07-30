@@ -1,5 +1,6 @@
 class Token:
     def __init__(self, name, ticker, price, variation_24h, category):
+        self.id = None,
         self.name = name
         self.ticker = ticker
         self.price = price.replace('$','')
@@ -28,6 +29,7 @@ class Token:
 
     def dict_data(self):
         return {
+        "id" : self.id,
         "name" : self.name,
         "ticker" : self.ticker,
         "price": self.price,

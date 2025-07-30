@@ -8,6 +8,7 @@ cursor = conn.cursor()
 def init_db():
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS tokens (
+        gecko_id TEXT,
         name TEXT,
         ticker TEXT,
         category TEXT,
@@ -26,11 +27,11 @@ def init_db():
 
 def insert_token(data: dict):
     cursor.execute("""
-    INSERT INTO tokens (name, ticker, category, is_new, trend_score, reddit_mentions, youtube_mentions,
+    INSERT INTO tokens (gecko_id, name, ticker, category, is_new, trend_score, reddit_mentions, youtube_mentions,
         current_price, market_cap, volume_24h, change_24h)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
-        data['name'], data['ticker'], data['category'], data['is_new'], data['trend_score'],
+        data['id'], data['name'], data['ticker'], data['category'], data['is_new'], data['trend_score'],
         data['reddit_mentions'], data['youtube_mentions'], data['current_price'],
         data['market_cap'], data['volume_24h'], data['change_24h']
     ))

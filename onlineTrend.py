@@ -51,7 +51,7 @@ reddit = praw.Reddit(
 )
 key = secret['google_key']
 
-pytrends = TrendReq()
+pytrends = TrendReq(retries=3,hl='en-US', tz=360)
 
 def get_google_trend_score(keyword):
     try:
@@ -63,14 +63,14 @@ def get_google_trend_score(keyword):
         print(data)
         return int(data[keyword].iloc[-1])
     except Exception as e:
-        print(e)
-        return 0
+        #print(e)
+        return -1
 
 def youtube_search_count(query, api_key=key, max_results=1000):
     try:
         youtube = build("youtube", "v3", developerKey=api_key)
 
-        published_after = (datetime.utcnow() - timedelta(days=1)).isoformat("T") + "Z"
+        published_after = (datetime.now() - timedelta(days=1)).isoformat("T") + "Z"
 
         request = youtube.search().list(
             part="snippet",
@@ -82,8 +82,8 @@ def youtube_search_count(query, api_key=key, max_results=1000):
         response = request.execute()
         return len(response.get("items", []))
     except Exception as error:
-        print(error)
-        return 0
+        #print(error)
+        return -1
 
 def count_reddit_mentions(keyword, subreddit="cryptocurrency", limit=1000):
     count = 0

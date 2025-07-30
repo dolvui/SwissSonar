@@ -7,8 +7,16 @@ def detect_anomalies(token_name):
         return None
 
     last = history[-1]
-    avg_reddit = sum(day['reddit_mentions'] for day in history[:-1]) / (len(history) - 1)
-    avg_trend = sum(day['trend_score'] for day in history[:-1]) / (len(history) - 1)
+
+    reddit_vals = [day['reddit_mentions'] for day in history[:-1] if day['reddit_mentions'] != -1]
+    trend_vals = [day['trend_score'] for day in history[:-1] if day['trend_score'] != -1]
+    yt_vals = [day['youtube_mentions'] for day in history[:-1] if day['youtube_mentions'] != -1]
+
+    avg_reddit = sum(reddit_vals) / len(reddit_vals) if reddit_vals else 0
+    avg_trend = sum(trend_vals) / len(trend_vals) if trend_vals else 0
+    avg_yt = sum(yt_vals) / len(yt_vals) if yt_vals else 0
+
+    score = (avg_trend * 2) + (avg_reddit) + (avg_yt)
 
     anomalies = {}
 
@@ -18,7 +26,10 @@ def detect_anomalies(token_name):
     if avg_trend > 0 and last['trend_score'] > avg_trend * 2:
         anomalies['google_trends'] = (last['trend_score'], avg_trend)
 
-    return anomalies if anomalies else None
+    if anomalies:
+        check_and_alert(token_name, anomalies)
+
+    return score
 
 def check_and_alert(token_name, anomalies):
     msg = f"🚨 Anomalie détectée sur {token_name} :\n\n"

@@ -1,6 +1,6 @@
 import requests
-import time
 from CryptoToken import Token
+from datetime import datetime,timedelta
 
 def fetch_market_data_fast(tokens, new_ids):
     # Step 1: Map tickers -> CoinGecko ID
@@ -18,6 +18,7 @@ def fetch_market_data_fast(tokens, new_ids):
             print(f"[WARN] Missing {token.ticker}")
             continue
 
+        token.id = gecko_id
         gecko_ids.append(gecko_id)
         id_to_token[gecko_id] = token
         token.is_new = token.name in new_ids
@@ -37,6 +38,7 @@ def fetch_market_data_fast(tokens, new_ids):
     # Step 3: Assign value
     for gid, data in response.items():
         token = id_to_token[gid]
+        # here store the token id from gecko for futur use as token.id = .....
         token.current_price = data.get("usd")
         token.market_cap = data.get("usd_market_cap")
         token.volume_24h = data.get("usd_24h_vol")
@@ -44,3 +46,17 @@ def fetch_market_data_fast(tokens, new_ids):
         rep.append(token)
 
     return rep
+
+def fetch_token_price(name):
+    start = datetime.now() - timedelta(days=7)
+    end = datetime.now()
+
+    url = f"https://api.coingecko.com/api/v3/coins/{name}/market_chart/range"
+    params = {
+        "vs_currency": "usd",
+        "from": f"{int(start.timestamp())}",
+        "to": f"{int(end.timestamp())}",
+        "precision": "5"
+    }
+    response = requests.get(url, params=params).json()
+    return response
