@@ -1,15 +1,19 @@
+import datetime
 from datetime import timedelta
 
 import coingeckoAPI
 import swissUpdate
 from onlineTrend import get_google_trend_score, count_reddit_mentions, youtube_search_count
 from graph import plot_top_mentions
-from sqliteDB import init_db, insert_token
+from sqliteDB import init_db, insert_token, fetch_token_gecko, fetch_token_24h
 #from alert import send_alert
 from anomaly_detector import detect_anomalies, check_and_alert
 from coingeckoAPI import fetch_token_price
 from analysis_preliminaire import analyse_token
-
+from pdf_builder import *
+import nostradamus
+import time
+import CryptoToken
 
 def main():
     init_db()
@@ -43,19 +47,30 @@ def main():
     tokensScore.sort(key=lambda x: x[1], reverse=True)
 
     print("\n📊 Top 5 tokens du jour :")
+    report_token = []
+    i = 0
+
     for name, score , ticker in tokensScore[:5]:
         print(f"🔸 {ticker} → score : {score:.2f}")
         data = fetch_token_price(name)
-        obj, report = analyse_token(name,data,ticker)
-        print(report)
+        print(data)
+        buf,predicted, actual, next_pred, model = nostradamus.generate_prediction_plot(data)
+        #predicted, actual, next_pred, model = nostradamus.train_rnn(data, window=10)
+        _, report = analyse_token(name, data, ticker)
 
-    #make me lag for no reason
-    #plot_top_mentions()
+        report_token.append({
+            "name": ticker,
+            "report": report,
+            "next_pred": next_pred,
+            "actual": actual,
+            "predicted": predicted,
+            "buf" : buf
+        })
+
+        if i != 1 and i % 3 == 0:
+            time.sleep(60)
+        i += 1
+    create_multi_pdf(report_token, filename="top5_crypto_report.pdf")
 
 
 main()
-# name = "0x Protocol"
-# data = fetch_token_price(name)
-# report = analyse_token(name,data)
-# print(report)
-

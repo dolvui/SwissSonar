@@ -58,3 +58,21 @@ class Token:
         trend_score : {self.trend_score} \n \
         reddit_mentions : {self.reddit_mentions} \n \
         youtube_mentions : {self.youtube_mentions} \n "
+
+def entity_to_token(dict):
+    token = Token(dict["name"],dict["ticker"],"",0,dict["category"])
+    token.id = dict["gecko_id"]
+    token.name = dict["name"]
+    token.ticker = dict["ticker"]
+    token.price = f"${dict["current_price"]}"
+    #token.variation_24h = dict["variation_24h"]
+    token.category = dict["category"]
+    token.current_price = dict["current_price"]
+    token.market_cap = dict["market_cap"]
+    token.volume_24h = dict["volume_24h"]
+    token.change_24h = dict["change_24h"]
+    token.is_new = dict["is_new"]
+    token.trend_score = dict["trend_score"]
+    token.reddit_mentions = dict["reddit_mentions"]
+    token.youtube_mentions = dict["youtube_mentions"]
+    return token

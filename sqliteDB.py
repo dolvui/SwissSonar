@@ -47,3 +47,35 @@ def fetch_last_7_days(token_name : str):
                    """, (token_name, seven_days_ago.isoformat()))
     rows = cursor.fetchall()
     return [dict(row) for row in rows]
+
+def fetch_token_gecko():
+    cursor.execute(""" SELECT DISTINCT gecko_id,ticker FROM tokens""")
+    rows = cursor.fetchall()
+    return [dict(row) for row in rows]
+
+def fetch_token_24h():
+    t24h_ago = datetime.now() - timedelta(hours=24)
+    cursor.execute("""
+                   SELECT gecko_id,
+                          name,
+                          ticker,
+                          category,
+                          is_new,
+                          trend_score,
+                          reddit_mentions,
+                          youtube_mentions,
+                          current_price,
+                          market_cap,
+                          volume_24h,
+                          change_24h
+                   FROM tokens
+                   WHERE timestamp >= ?
+                     AND timestamp IN (
+                       SELECT MAX (timestamp)
+                       FROM tokens
+                       WHERE timestamp >= ?
+                       GROUP BY gecko_id
+                       )
+                   """, (t24h_ago.isoformat(), t24h_ago.isoformat()))
+    rows = cursor.fetchall()
+    return [dict(row) for row in rows]
