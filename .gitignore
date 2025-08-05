@@ -211,3 +211,4 @@ __marimo__/
 crypto_tracker.db
 secret.json
 plan_d'attaque.md
+models/*

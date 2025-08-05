@@ -19,7 +19,7 @@ def save_training_plot(actual, predicted):
     plt.close()
     return buf
 
-def add_token_page(c, name, report_text, next_pred, actual, predicted, buf):
+def add_token_page(c, name, report_text, next_pred, actual, predicted, buf, Bbuff):
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.utils import ImageReader
 
@@ -56,6 +56,11 @@ def add_token_page(c, name, report_text, next_pred, actual, predicted, buf):
     c.drawImage(ImageReader(buf), 50, y - img2_height - 20, width=500, preserveAspectRatio=True, mask='auto')
     c.drawString(50, y - img2_height - 40, "📈 Future Price Prediction")
 
+    # third plot (bigger model)
+    img2_height = 200
+    c.drawImage(ImageReader(Bbuff), 50, y - img2_height - 200, width=500, preserveAspectRatio=True, mask='auto')
+    c.drawString(50, y - img2_height - 40, "📈 Future Price Prediction with bigger model")
+
     c.showPage()
 
 
@@ -69,6 +74,7 @@ def create_multi_pdf(token_data_list, filename="FULL_TOKENS_REPORT.pdf"):
             token_data["next_pred"],
             token_data["actual"],
             token_data["predicted"],
-            token_data["buf"]
+            token_data["buf"],
+            token_data["Bbuff"],
         )
     c.save()

@@ -1,5 +1,4 @@
 from sqliteDB import fetch_last_7_days
-#from alert import send_alert
 
 def detect_anomalies(token_name):
     history = fetch_last_7_days(token_name)

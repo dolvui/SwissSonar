@@ -1,10 +1,10 @@
-from pytrends.request import TrendReq
 import praw
 from googleapiclient.discovery import build
 import json
 from datetime import datetime, timedelta
 from pytrends.request import TrendReq as PyTrendReq
 import pandas as pd
+from CryptoToken import Token
 
 pd.set_option('future.no_silent_downcasting', True)
 
@@ -51,11 +51,22 @@ reddit = praw.Reddit(
 )
 key = secret['google_key']
 
-pytrends = TrendReq(retries=3,hl='en-US', tz=360)
+pytrends = TrendReq(hl='en-US', tz=360)
+
+
+def fetch_online_trend(tokens : [Token]):
+    rep = []
+    for token in tokens:
+        print(f"Processing {token.name}")
+        token.trend_score = get_google_trend_score(token.name)
+        token.reddit_mentions = count_reddit_mentions(token.name)
+        token.youtube_mentions = youtube_search_count(token.name)
+        rep.append(token)
+    return rep
+
 
 def get_google_trend_score(keyword):
     try:
-        #pytrends = TrendReq(retries=3)#TrendReq(hl='en-US', tz=360)
         kw_list = [keyword]
         pytrends.build_payload(kw_list, cat=0, timeframe='now 7-d', geo='', gprop='')
 
@@ -63,7 +74,7 @@ def get_google_trend_score(keyword):
         print(data)
         return int(data[keyword].iloc[-1])
     except Exception as e:
-        #print(e)
+        print("google Failed ! : \n",e)
         return -1
 
 def youtube_search_count(query, api_key=key, max_results=1000):
@@ -82,11 +93,28 @@ def youtube_search_count(query, api_key=key, max_results=1000):
         response = request.execute()
         return len(response.get("items", []))
     except Exception as error:
-        #print(error)
+        print("youtube Failed ! : \n",error)
         return -1
 
 def count_reddit_mentions(keyword, subreddit="cryptocurrency", limit=1000):
     count = 0
-    for post in reddit.subreddit(subreddit).search(keyword, limit=limit):
-        count += 1
+    try:
+        for _ in reddit.subreddit(subreddit).search(keyword, limit=limit):
+            count += 1
+    except Exception as e:
+        print("reddit Failed ! : \n", e)
+        return -1
     return count
+
+def compute_heuristics(google_trend, youtube_mentions, reddit_mentions, previous_google, previous_youtube, previous_reddit):
+    delta_google = ((google_trend - previous_google) / 200)
+    delta_youtube = ((youtube_mentions - previous_youtube) / 2000)
+    delta_reddit = ((reddit_mentions - previous_reddit) / 2000)
+
+    yt = (int(youtube_mentions != -1 and previous_youtube != -1) * 2) + delta_youtube
+    gg = (int(google_trend != -1 and previous_google != -1) * 5) + delta_google
+    rd = (int(reddit_mentions != -1 and previous_reddit != -1) * 3) + delta_reddit
+
+    h = (( gg*(google_trend/100) + yt*(youtube_mentions/1000) + rd*(reddit_mentions/1000))*10)/ (yt + gg + rd)
+    print(h)
+    return h

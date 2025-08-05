@@ -47,8 +47,8 @@ def fetch_market_data_fast(tokens, new_ids):
 
     return rep
 
-def fetch_token_price(name):
-    start = datetime.now() - timedelta(days=7)
+def fetch_token_price(name,days=7):
+    start = datetime.now() - timedelta(days=days)
     end = datetime.now()
 
     url = f"https://api.coingecko.com/api/v3/coins/{name}/market_chart/range"

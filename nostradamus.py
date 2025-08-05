@@ -42,10 +42,6 @@ def train_rnn(data, window=10, epochs=2000, lr=0.01):
         loss = criterion(output, Y_tensor)
         loss.backward()
         optimizer.step()
-        # if epoch % 500 == 0:
-        #     print(f"Epoch {epoch} - Loss: {loss.item():.4f}")
-
-    # Predict next value
     model.eval()
     out = None
     out_actual = None
@@ -63,30 +59,19 @@ def train_rnn(data, window=10, epochs=2000, lr=0.01):
     actual = Y_tensor.squeeze().numpy() * std + mean
 
     mse = np.mean((predicted - actual) ** 2)
-    # print(f"\n🔮 Next predicted price: {next_price:.2f}")
-    # print(f"📉 MSE on training set: {mse:.4f}")
-
-    # Plot
-    # plt.figure(figsize=(10, 4))
-    # plt.plot(actual, label="Actual")
-    # plt.plot(predicted, label="Predicted")
-    # plt.title("Training Fit")
-    # plt.legend()
-    # plt.grid(True)
-    # plt.show()
+    print(f"📉 MSE on training set: {mse:.4f}")
 
     return out[-100:], out_actual[-100:], next_price, model
 
 import matplotlib.pyplot as plt
 
-def generate_prediction_plot(data, window=10, future_steps=20):
-    predicted_train, actual_train, next_price, model = train_rnn(data, window=window)
+def generate_prediction_plot(data, window=10, future_steps=20,epochs=2000, lr=0.01):
+    predicted_train, actual_train, next_price, model = train_rnn(data, window=window,epochs=epochs,lr=lr)
 
     prices = np.array([float(e[1]) for e in data['prices']], dtype=np.float32)
     mean, std = prices.mean(), prices.std()
     prices_norm = (prices - mean) / std
 
-    # Start with last known sequence
     future_input = prices_norm[-window:].tolist()
     future_preds = []
 
@@ -96,12 +81,10 @@ def generate_prediction_plot(data, window=10, future_steps=20):
             seq = torch.tensor(future_input[-window:], dtype=torch.float32).unsqueeze(0).unsqueeze(2)
             next_norm = model(seq).item()
             future_preds.append(next_norm)
-            future_input.append(next_norm)  # Append prediction to the sequence
+            future_input.append(next_norm)
 
-    # Denormalize
     future_preds = np.array(future_preds) * std + mean
 
-    # Plotting
     plt.figure(figsize=(12, 5))
     plt.plot(prices, label="Actual Prices", color="blue")
     #plt.plot(np.arange(window, window + len(predicted_train)), predicted_train, label="Predicted (Train)", color="orange")
