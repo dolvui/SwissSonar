@@ -89,7 +89,7 @@ def fetch_last_7_days(token_name):
     return sorted(history, key=lambda x: x["timestamp"])
 
 def fetch_token_24h():
-    t24h_ago = datetime.utcnow() - timedelta(hours=24)
+    t24h_ago = datetime.now() - timedelta(hours=24)
     result = []
 
     for doc in tokens.find():

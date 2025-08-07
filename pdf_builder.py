@@ -19,7 +19,7 @@ def save_training_plot(actual, predicted):
     plt.close()
     return buf
 
-def add_token_page(c, name, report_text, next_pred, actual, predicted, buf, Bbuff):
+def add_token_page(c, name, report_text, next_pred, actual, predicted, buf):
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.utils import ImageReader
 
@@ -39,26 +39,26 @@ def add_token_page(c, name, report_text, next_pred, actual, predicted, buf, Bbuf
     c.drawText(text)
 
     # Prediction info
-    y -= 20
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(50, y, f"🔮 Next Predicted Price (normalized): {next_pred:.4f}")
-    y -= 30
-
-    # First plot (training fit)
-    plot_buf = save_training_plot(actual, predicted)
-    img1_height = 200
-    c.drawImage(ImageReader(plot_buf), 50, y - img1_height, width=500, preserveAspectRatio=True, mask='auto')
-    y -= (img1_height + 20)
-    c.drawString(50, y, "📊 Training Fit")
+    # y -= 20
+    # c.setFont("Helvetica-Bold", 12)
+    # c.drawString(50, y, f"🔮 Next Predicted Price (normalized): {next_pred:.4f}")
+    # y -= 30
+    #
+    # # First plot (training fit)
+    # plot_buf = save_training_plot(actual, predicted)
+    # img1_height = 200
+    # c.drawImage(ImageReader(plot_buf), 50, y - img1_height, width=500, preserveAspectRatio=True, mask='auto')
+    # y -= (img1_height + 20)
+    # c.drawString(50, y, "📊 Training Fit")
 
     # Second plot (future prediction)
-    img2_height = 200
-    c.drawImage(ImageReader(buf), 50, y - img2_height - 20, width=500, preserveAspectRatio=True, mask='auto')
-    c.drawString(50, y - img2_height - 40, "📈 Future Price Prediction")
+    # img2_height = 200
+    # c.drawImage(ImageReader(buf), 50, y - img2_height - 20, width=500, preserveAspectRatio=True, mask='auto')
+    # c.drawString(50, y - img2_height - 40, "📈 Future Price Prediction")
 
     # third plot (bigger model)
     img2_height = 200
-    c.drawImage(ImageReader(Bbuff), 50, y - img2_height - 200, width=500, preserveAspectRatio=True, mask='auto')
+    c.drawImage(ImageReader(buf), 50, y - img2_height -20, width=500, preserveAspectRatio=True, mask='auto')
     c.drawString(50, y - img2_height - 40, "📈 Future Price Prediction with bigger model")
 
     c.showPage()
@@ -74,7 +74,6 @@ def create_multi_pdf(token_data_list, filename="FULL_TOKENS_REPORT.pdf"):
             token_data["next_pred"],
             token_data["actual"],
             token_data["predicted"],
-            token_data["buf"],
-            token_data["Bbuff"],
+            token_data["buf"]
         )
     c.save()

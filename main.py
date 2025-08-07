@@ -11,6 +11,37 @@ from pdf_builder import *
 from sqliteDB import init_db
 from datetime import datetime
 
+
+def process_token(tokenScore):
+    print("\n📊 Top 5 tokens du jour :")
+    report_token = []
+    i = 0
+
+    for name, score, ticker in tokenScore[:5]:
+        print(f"🔸 {ticker} → score : {score:.2f}")
+        data = fetch_token_price(name, days=180)
+        # buf,predicted, actual, next_pred, model = nostradamus.generate_prediction_plot(data)
+        path = "C:\\Users\\nghidalia\\PycharmProjects\\SwissSonar\\models\\tigerV2_20250807_152739.pt"
+        from tigerV2 import run_model_and_plot
+        Bbuff = run_model_and_plot(path, data)
+        _, report = analyse_token(name, data, ticker)
+
+        report_token.append({
+            "name": ticker,
+            "report": report,
+            "next_pred": None,
+            "actual": None,
+            "predicted": None,
+            "buf": Bbuff,
+        })
+
+        if i != 1 and i % 3 == 0:
+            time.sleep(60)
+        i += 1
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    create_multi_pdf(report_token, filename=f"top5_crypto_report_{timestamp}.pdf")
+
 def sort_token(tokens):
     tokensScore = []
     heur = 1
@@ -29,17 +60,15 @@ def sort_token(tokens):
 
         if score :
             tokensScore.append((token.id, (score/300) * heur , token.ticker))
+        else:
+            tokensScore.append((token.id, heur, token.ticker))
 
     tokensScore.sort(key=lambda x: x[1], reverse=True)
     return tokensScore
 
-def main():
+def fetch_coins():
     init_db()
-    from mongodb import fetch_token_gecko
 
-    data = fetch_token_gecko()
-    print(data)
-    return
     tokens, new_ids = swissUpdate.get_swissUpadte()
 
     enriched_tokens = coingeckoAPI.fetch_market_data_fast(tokens, new_ids)
@@ -50,37 +79,38 @@ def main():
 
     tokensScore = sort_token(full_tokens)
 
+    process_token(tokensScore)
 
-    print("\n📊 Top 5 tokens du jour :")
-    report_token = []
-    i = 0
+def from_database():
 
-    for name, score , ticker in tokensScore[:5]:
-        print(f"🔸 {ticker} → score : {score:.2f}")
-        data = fetch_token_price(name,days=180)
-        buf,predicted, actual, next_pred, model = nostradamus.generate_prediction_plot(data)
-        path = "C:\\Users\\nghidalia\\PycharmProjects\\SwissSonar\\models\\tigerV2_20250805_152652.pt"
-        from tigerV2 import run_model_and_plot
-        Bbuff = run_model_and_plot(path,data)
-        _, report = analyse_token(name, data, ticker)
+    from mongodb import fetch_token_24h
+    from CryptoToken import entity_to_token
 
-        report_token.append({
-            "name": ticker,
-            "report": report,
-            "next_pred": next_pred,
-            "actual": actual,
-            "predicted": predicted,
-            "buf" : buf,
-            "Bbuff" : Bbuff
-        })
+    result = fetch_token_24h()
+    tokens = []
+    for e in result:
+        token = entity_to_token(e)
+        tokens.append(token)
 
-        if i != 1 and i % 3 == 0:
-            time.sleep(60)
-        i += 1
+    tokensScore = sort_token(tokens)
 
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    create_multi_pdf(report_token, filename=f"top5_crypto_report_{timestamp}.pdf")
+    process_token(tokensScore)
 
 
 if __name__ == '__main__':
-    main()
+    import argparse
+
+    parser = argparse.ArgumentParser(description='select which action need to make')
+    parser.add_argument('--fetch-coins', metavar='boolean', required=False, help='fetch coins or only use in DB')
+    parser.add_argument('--train', metavar='None', required=False, help='train a RNN')
+
+    args = parser.parse_args()
+
+    if args.fetch_coins:
+        if args.fetch_coins == 'True':
+            fetch_coins()
+        else:
+            from_database()
+    if args.train:
+        from tigerV2 import train
+        train()

@@ -116,5 +116,4 @@ def compute_heuristics(google_trend, youtube_mentions, reddit_mentions, previous
     rd = (int(reddit_mentions != -1 and previous_reddit != -1) * 3) + delta_reddit
 
     h = (( gg*(google_trend/100) + yt*(youtube_mentions/1000) + rd*(reddit_mentions/1000))*10)/ (yt + gg + rd)
-    print(h)
     return h
