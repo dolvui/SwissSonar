@@ -14,12 +14,12 @@ from CryptoToken import Token
 # options.add_argument('--disable-dev-shm-usage')
 # driver = webdriver.Chrome(options=options)
 
-driver = None
-
-def init():
-    driver = get_driver()
-    driver.get("https://swissborg.com/fr/supported-assets")
-    time.sleep(3)
+# driver = None
+#
+# def init():
+#     driver = get_driver()
+#     driver.get("https://swissborg.com/fr/supported-assets")
+#     time.sleep(3)
 
 def get_driver():
     chrome_options = Options()
@@ -36,7 +36,9 @@ def get_driver():
 def get_swissUpadte() -> ([Token],[str]) :
     tokens : [Token] = []
     new_tokens : [str] = []
-
+    driver = get_driver()
+    driver.get("https://swissborg.com/fr/supported-assets")
+    time.sleep(3)
     html = driver.page_source
     driver.quit()
 
