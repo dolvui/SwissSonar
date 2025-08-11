@@ -11,7 +11,6 @@ MONGO_URI = st.secrets["mongo"]["uri"]
 DB_NAME = st.secrets["mongo"]["db_name"]
 
 client = MongoClient(MONGO_URI)
-print(client)
 db = client[DB_NAME]
 tokens = db.tokens
 
