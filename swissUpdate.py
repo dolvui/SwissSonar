@@ -7,7 +7,7 @@ from CryptoToken import Token
 
 
 options = webdriver.ChromeOptions()
-options.add_argument('--headless')
+options.add_argument('--headless=new')
 options.add_argument('--edge-skip-compat-layer-relaunch')
 options.add_argument('--no-sandbox')
 driver = webdriver.Chrome(options=options)
