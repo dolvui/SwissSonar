@@ -110,7 +110,7 @@ def frontpage():
 
     tokensScore = sort_token(tokens)
     df_tokens = pd.DataFrame([t.dict_data() for t in tokensScore])
-
+    print(df_tokens)
     if df_tokens is None:
         tokens, new_ids = swissUpdate.get_swissUpadte()
 
