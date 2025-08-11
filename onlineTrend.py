@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from pytrends.request import TrendReq as PyTrendReq
 import pandas as pd
 from CryptoToken import Token
+import streamlit as st
 
 pd.set_option('future.no_silent_downcasting', True)
 
@@ -41,8 +42,11 @@ class TrendReq(PyTrendReq):
 
 secret = None
 
-with open("secret.json", 'r', encoding='utf-8') as json_file:
-    secret = json.load(json_file)
+try:
+    with open("secret.json", 'r', encoding='utf-8') as json_file:
+        secret = json.load(json_file)
+except:
+    secret = st.secrets
 
 reddit = praw.Reddit(
     client_id=secret['client_id'],
