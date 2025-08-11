@@ -1,9 +1,17 @@
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 from CryptoToken import Token
+import streamlit as st
 
-client = MongoClient("localhost",27017)
-db = client.crypto_db
+# client = MongoClient("localhost",27017)
+# db = client.crypto_db
+# tokens = db.tokens
+
+MONGO_URI = st.secrets["mongo"]["uri"]
+DB_NAME = st.secrets["mongo"]["db_name"]
+
+client = MongoClient(MONGO_URI)
+db = client[DB_NAME]
 tokens = db.tokens
 
 def upsert_tokens_entry(data):
