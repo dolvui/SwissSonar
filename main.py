@@ -99,10 +99,7 @@ def frontpage():
     from CryptoToken import entity_to_token
 
     result = fetch_token_24h()
-    print(result)
     st.title("📊 Crypto Analysis Dashboard : ")
-    print(len(result))
-    return
     tokens = []
     for e in result:
         token = entity_to_token(e)

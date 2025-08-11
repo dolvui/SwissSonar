@@ -11,10 +11,10 @@ MONGO_URI = st.secrets["mongo"]["uri"]
 DB_NAME = st.secrets["mongo"]["db_name"]
 
 client = MongoClient(MONGO_URI)
-st.write(client[DB_NAME])
+print(client[DB_NAME])
 db = client[DB_NAME]
 tokens = db.tokens
-st.write(tokens)
+print(tokens)
 def upsert_tokens_entry(data):
     for token in data:
         upsert_token_entry(token.dict_data())
