@@ -47,7 +47,7 @@ def sort_token(tokens):
     tokensScore = []
     heur = 1
     for token in tokens:
-        score = detect_anomalies(token.name)
+        #score = detect_anomalies(token.name)
         data = get_latest_online_trends(token.id)
 
         if len(data) >= 2 :
@@ -59,10 +59,7 @@ def sort_token(tokens):
             previous_reddit = data[1]['reddit_mentions']
             heur = compute_heuristics(google_trend, youtube_mentions, reddit_mentions, previous_google, previous_youtube, previous_reddit)
 
-        if score :
-            tokensScore.append((token.id, (score/300) * heur , token.ticker))
-        else:
-            tokensScore.append((token.id, heur, token.ticker))
+        tokensScore.append((token.id, heur, token.ticker))
 
     tokensScore.sort(key=lambda x: x[1], reverse=True)
     return tokensScore
