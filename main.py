@@ -99,30 +99,22 @@ def from_database():
     process_token(tokensScore)
 
 def frontpage():
-    # df_tokens=None
-    # try:
-    #     from mongodb import fetch_token_24h
-    #     from CryptoToken import entity_to_token
-    #
-    #     result = fetch_token_24h()
-    #     tokens = []
-    #     for e in result:
-    #         token = entity_to_token(e)
-    #         tokens.append(token)
-    #
-    #     tokensScore = sort_token(tokens)
-    #
-    #     df_tokens = pd.DataFrame([t.dict_data() for t in tokensScore])
-    # except:
-    tokens, new_ids = swissUpdate.get_swissUpadte()
+    df_tokens=None
+    try:
+        from mongodb import fetch_token_24h
+        from CryptoToken import entity_to_token
 
-    enriched_tokens = coingeckoAPI.fetch_market_data_fast(tokens, new_ids)
+        result = fetch_token_24h()
+        tokens = []
+        for e in result:
+            token = entity_to_token(e)
+            tokens.append(token)
 
-    full_tokens = fetch_online_trend(enriched_tokens)
+        tokensScore = sort_token(tokens)
 
-    upsert_tokens_entry(full_tokens)
-
-    df_tokens = pd.DataFrame([t.dict_data() for t in full_tokens])
+        df_tokens = pd.DataFrame([t.dict_data() for t in tokensScore])
+    except:
+        pass
 
     # ========================
     # FRONT PAGE LAYOUT
@@ -133,6 +125,16 @@ def frontpage():
 
     # ---- Dashboard Section ----
     st.subheader("Dashboard Overview")
+    if(st.button("refresh")):
+        tokens, new_ids = swissUpdate.get_swissUpadte()
+
+        enriched_tokens = coingeckoAPI.fetch_market_data_fast(tokens, new_ids)
+
+        full_tokens = fetch_online_trend(enriched_tokens)
+
+        upsert_tokens_entry(full_tokens)
+
+        df_tokens = pd.DataFrame([t.dict_data() for t in full_tokens])
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
