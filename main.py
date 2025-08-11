@@ -167,13 +167,16 @@ def frontpage():
     if st.button("🔎 Analyse"):
         st.success(f"Launching analysis for {selected_token}...")
         data = fetch_token_price(selected_token, days=180)
+        if data['status']:
+            if data['status']['error_code'] == 429:
+                st.error('wait 60 sec before call a another analyse !')
         print("------data:")
         print(data)
         print("------datra")
         path = "./models/tigerV2_20250807_152739.pt"
         from tigerV2 import run_model_and_plot
         Bbuff = run_model_and_plot(path, data)
-        st.pyplot(Bbuff)
+        st.image(Bbuff)
 
 if __name__ == '__main__':
     import argparse

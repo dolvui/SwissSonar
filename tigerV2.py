@@ -169,4 +169,4 @@ def run_model_and_plot(model_path, data, window=15, steps_ahead=50, days=180):
     buf.seek(0)
     plt.close()
 
-    return plt
+    return buf
