@@ -105,7 +105,7 @@ def frontpage():
         tokens.append(token)
 
     #tokensScore = sort_token(tokens)
-    df_tokens = pd.DataFrame([t.dict_data for t in tokens])
+    df_tokens = pd.DataFrame([t.dict_data() for t in tokens])
     print("-----------tokens:")
     print(df_tokens)
     print("-----------tokens")
