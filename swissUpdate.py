@@ -8,6 +8,7 @@ from CryptoToken import Token
 
 options = webdriver.ChromeOptions()
 options.add_argument('--headless')
+options.add_argument('--edge-skip-compat-layer-relaunch')
 driver = webdriver.Chrome(options=options)
 
 driver.get("https://swissborg.com/fr/supported-assets")

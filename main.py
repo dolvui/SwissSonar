@@ -10,7 +10,11 @@ from onlineTrend import fetch_online_trend, compute_heuristics
 from pdf_builder import *
 from sqliteDB import init_db
 from datetime import datetime
+import streamlit
 
+import streamlit as st
+x = st.slider("Select a value")
+st.write(x, "squared is", x * x)
 
 def process_token(tokenScore):
     print("\n📊 Top 5 tokens du jour :")
