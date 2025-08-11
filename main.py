@@ -10,11 +10,8 @@ from onlineTrend import fetch_online_trend, compute_heuristics
 from pdf_builder import *
 from sqliteDB import init_db
 from datetime import datetime
-import streamlit
-
 import streamlit as st
-x = st.slider("Select a value")
-st.write(x, "squared is", x * x)
+import pandas as pd
 
 def process_token(tokenScore):
     print("\n📊 Top 5 tokens du jour :")
@@ -101,6 +98,67 @@ def from_database():
 
     process_token(tokensScore)
 
+def frontpage():
+    tokens, new_ids = swissUpdate.get_swissUpadte()
+
+    enriched_tokens = coingeckoAPI.fetch_market_data_fast(tokens, new_ids)
+
+    full_tokens = fetch_online_trend(enriched_tokens)
+
+    df_tokens = pd.DataFrame(full_tokens)
+
+    # ========================
+    # FRONT PAGE LAYOUT
+    # ========================
+    st.set_page_config(page_title="Crypto Analysis Dashboard", layout="wide")
+
+    st.title("📊 Crypto Analysis Dashboard")
+
+    # ---- Dashboard Section ----
+    st.subheader("Dashboard Overview")
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.metric("Total Tokens", len(df_tokens))
+    with col2:
+        avg_price = df_tokens["current_price"].mean()
+        st.metric("Average Price", f"${avg_price:,.2f}")
+    with col3:
+        top_trend = df_tokens.loc[df_tokens["trend_score"].idxmax()]["name"]
+        st.metric("Top Trend Token", top_trend)
+    with col4:
+        top_marketcap = df_tokens.loc[df_tokens["market_cap"].idxmax()]["name"]
+        st.metric("Highest Market Cap", top_marketcap)
+
+    st.markdown("---")
+
+    # ---- Search & List Section ----
+    st.subheader("Token List & Analysis")
+
+    search_query = st.text_input("🔍 Search token by name or ticker").lower()
+
+    if search_query:
+        filtered_df = df_tokens[
+            df_tokens["name"].str.lower().str.contains(search_query)
+            | df_tokens["ticker"].str.lower().str.contains(search_query)
+            ]
+    else:
+        filtered_df = df_tokens
+
+    # Display table
+    st.dataframe(
+        filtered_df[["name", "ticker", "current_price", "variation_24h", "market_cap", "trend_score"]],
+        use_container_width=True
+    )
+
+    # Select a token
+    selected_token = st.selectbox("Select a token for analysis", filtered_df["name"].tolist())
+
+    # Analyse button
+    if st.button("🔎 Analyse"):
+        st.success(f"Launching analysis for {selected_token}...")
+        # TODO: Call your analysis function here
+        # analyse_token(selected_token)
 
 if __name__ == '__main__':
     import argparse
@@ -119,3 +177,6 @@ if __name__ == '__main__':
     if args.train:
         from tigerV2 import train
         train()
+
+    if not args.train and not args.fetch_coins:
+        frontpage()
