@@ -102,7 +102,7 @@ def frontpage():
     from CryptoToken import entity_to_token
 
     result = fetch_token_24h()
-
+    print("result databse : ",result)
     tokens = []
     for e in result:
         token = entity_to_token(e)
@@ -172,18 +172,21 @@ def frontpage():
 
     # Display table
     st.dataframe(
-        filtered_df[["name", "ticker", "current_price", "variation_24h", "market_cap", "trend_score"]],
+        filtered_df[["id","name", "ticker", "current_price", "variation_24h", "market_cap", "trend_score"]],
         use_container_width=True
     )
 
     # Select a token
-    selected_token = st.selectbox("Select a token for analysis", filtered_df["name"].tolist())
+    selected_token = st.selectbox("Select a token for analysis", filtered_df["id"].tolist())
 
     # Analyse button
     if st.button("🔎 Analyse"):
         st.success(f"Launching analysis for {selected_token}...")
-        # TODO: Call your analysis function here
-        # analyse_token(selected_token)
+        data = fetch_token_price(selected_token, days=180)
+        path = "./models/tigerV2_20250807_152739.pt"
+        from tigerV2 import run_model_and_plot
+        Bbuff = run_model_and_plot(path, data)
+        st.pyplot(Bbuff)
 
 if __name__ == '__main__':
     import argparse
