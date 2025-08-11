@@ -99,13 +99,26 @@ def from_database():
     process_token(tokensScore)
 
 def frontpage():
-    tokens, new_ids = swissUpdate.get_swissUpadte()
+    from mongodb import fetch_token_24h
+    from CryptoToken import entity_to_token
 
-    enriched_tokens = coingeckoAPI.fetch_market_data_fast(tokens, new_ids)
+    result = fetch_token_24h()
+    tokens = []
+    for e in result:
+        token = entity_to_token(e)
+        tokens.append(token)
 
-    full_tokens = fetch_online_trend(enriched_tokens)
+    tokensScore = sort_token(tokens)
 
-    df_tokens = pd.DataFrame([t.dict_data() for t in full_tokens])
+    df_tokens = pd.DataFrame([t.dict_data() for t in tokensScore])
+
+    # tokens, new_ids = swissUpdate.get_swissUpadte()
+    #
+    # enriched_tokens = coingeckoAPI.fetch_market_data_fast(tokens, new_ids)
+    #
+    # full_tokens = fetch_online_trend(enriched_tokens)
+    #
+    # df_tokens = pd.DataFrame([t.dict_data() for t in full_tokens])
 
     # ========================
     # FRONT PAGE LAYOUT
