@@ -211,4 +211,6 @@ __marimo__/
 crypto_tracker.db
 secret.json
 plan_d'attaque.md
-models/*
+models/tiger.pt
+models/tiger2.pt
+models/tiger_*.pt

@@ -105,7 +105,7 @@ def frontpage():
 
     full_tokens = fetch_online_trend(enriched_tokens)
 
-    df_tokens = pd.DataFrame(full_tokens)
+    df_tokens = pd.DataFrame([t.dict_data() for t in full_tokens])
 
     # ========================
     # FRONT PAGE LAYOUT
