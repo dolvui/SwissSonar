@@ -99,7 +99,7 @@ def from_database():
     process_token(tokensScore)
 
 def frontpage():
-    df_tokens=None
+    df_tokens = []
     try:
         from mongodb import fetch_token_24h
         from CryptoToken import entity_to_token
@@ -111,7 +111,7 @@ def frontpage():
             tokens.append(token)
 
         tokensScore = sort_token(tokens)
-
+        print(tokensScore)
         df_tokens = pd.DataFrame([t.dict_data() for t in tokensScore])
     except:
         pass
@@ -125,7 +125,7 @@ def frontpage():
 
     # ---- Dashboard Section ----
     st.subheader("Dashboard Overview")
-    if(st.button("refresh")):
+    if st.button("refresh") :
         tokens, new_ids = swissUpdate.get_swissUpadte()
 
         enriched_tokens = coingeckoAPI.fetch_market_data_fast(tokens, new_ids)
