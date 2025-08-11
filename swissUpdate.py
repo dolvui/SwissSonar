@@ -10,6 +10,7 @@ options = webdriver.ChromeOptions()
 options.add_argument('--headless=new')
 options.add_argument('--edge-skip-compat-layer-relaunch')
 options.add_argument('--no-sandbox')
+options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome(options=options)
 
 driver.get("https://swissborg.com/fr/supported-assets")
