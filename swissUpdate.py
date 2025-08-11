@@ -1,20 +1,37 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import time
 import re
 from CryptoToken import Token
 
 
-options = webdriver.ChromeOptions()
-options.add_argument('--headless=new')
-options.add_argument('--edge-skip-compat-layer-relaunch')
-options.add_argument('--no-sandbox')
-options.add_argument('--disable-dev-shm-usage')
-driver = webdriver.Chrome(options=options)
+# options = webdriver.ChromeOptions()
+# options.add_argument('--headless=new')
+# options.add_argument('--edge-skip-compat-layer-relaunch')
+# options.add_argument('--no-sandbox')
+# options.add_argument('--disable-dev-shm-usage')
+# driver = webdriver.Chrome(options=options)
 
-driver.get("https://swissborg.com/fr/supported-assets")
-time.sleep(3)
+driver = None
+
+def init():
+    driver = get_driver()
+    driver.get("https://swissborg.com/fr/supported-assets")
+    time.sleep(3)
+
+def get_driver():
+    chrome_options = Options()
+    chrome_options.binary_location = "/usr/bin/chromium-browser"
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+
+    return webdriver.Chrome(
+        service=Service("/usr/bin/chromedriver"),
+        options=chrome_options
+    )
 
 def get_swissUpadte() -> ([Token],[str]) :
     tokens : [Token] = []

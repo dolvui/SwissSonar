@@ -73,6 +73,7 @@ def sort_token(tokens):
 def fetch_coins():
     init_db()
 
+    swissUpdate.init()
     tokens, new_ids = swissUpdate.get_swissUpadte()
 
     enriched_tokens = coingeckoAPI.fetch_market_data_fast(tokens, new_ids)
