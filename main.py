@@ -106,9 +106,6 @@ def frontpage():
 
     #tokensScore = sort_token(tokens)
     df_tokens = pd.DataFrame([t.dict_data() for t in tokens])
-    print("-----------tokens:")
-    print(df_tokens)
-    print("-----------tokens")
     # ========================
     # FRONT PAGE LAYOUT
     # ========================
@@ -170,6 +167,9 @@ def frontpage():
     if st.button("🔎 Analyse"):
         st.success(f"Launching analysis for {selected_token}...")
         data = fetch_token_price(selected_token, days=180)
+        print("------data:")
+        print(data)
+        print("------datra")
         path = "./models/tigerV2_20250807_152739.pt"
         from tigerV2 import run_model_and_plot
         Bbuff = run_model_and_plot(path, data)
