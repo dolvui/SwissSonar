@@ -99,7 +99,6 @@ def frontpage():
     from CryptoToken import entity_to_token
 
     result = fetch_token_24h()
-    st.title("📊 Crypto Analysis Dashboard : ")
     tokens = []
     for e in result:
         token = entity_to_token(e)
@@ -107,7 +106,7 @@ def frontpage():
 
     #tokensScore = sort_token(tokens)
     df_tokens = pd.DataFrame([t.dict_data for t in tokens])
-
+    print(df_tokens)
     # ========================
     # FRONT PAGE LAYOUT
     # ========================
