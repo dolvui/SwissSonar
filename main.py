@@ -174,9 +174,10 @@ def frontpage():
         from tigerV2 import run_model_and_plot
         try:
             Bbuff = run_model_and_plot(path, data)
+            st.image(Bbuff)
         except:
             st.error('wait 60 sec before call a another analyse !')
-        st.image(Bbuff)
+
 
 if __name__ == '__main__':
     import argparse
