@@ -110,8 +110,8 @@ def frontpage():
 
     tokensScore = sort_token(tokens)
     df_tokens = pd.DataFrame([t.dict_data() for t in tokensScore])
-    print(df_tokens)
-    if df_tokens is None:
+
+    if df_tokens is None or df_tokens.empty:
         tokens, new_ids = swissUpdate.get_swissUpadte()
 
         enriched_tokens = coingeckoAPI.fetch_market_data_fast(tokens, new_ids)
