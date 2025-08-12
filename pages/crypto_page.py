@@ -50,9 +50,9 @@ col1, col2, col3, col4 = st.columns(4)
 with col1:
     st.metric("Total Tokens", len(df_tokens))
 with col2:
-    times_recent = pd.DataFrame(times).max()
-    avg_price = df_tokens["current_price"].mean()
-    st.metric("Average Price", f"${times_recent:,.2f}")
+    import time
+    times_recent = pd.DataFrame([ time.ctime(int(t)) for t in times])
+    st.metric("Last fetch", f"{times_recent.max()}")
 with col3:
     top_trend = df_tokens.loc[df_tokens["trend_score"].idxmax()]["name"]
     st.metric("Top Trend Token", top_trend)
