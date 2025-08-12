@@ -119,6 +119,7 @@ if __name__ == '__main__':
             ],
             "Resources": [
                 st.Page("pages/crypto_page.py", title="Crypto tools"),
+                st.Page("pages/train_model.py.py", title="model Crypto"),
             ],
         }
         #home = st.Page("pages/home.py",title="home",icon="🏠")
