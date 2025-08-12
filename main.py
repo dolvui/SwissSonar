@@ -113,4 +113,4 @@ if __name__ == '__main__':
         train()
 
     if not args.train and not args.fetch_coins:
-        st.switch_page("streamlit\\home.py")
+        st.switch_page("streamlit/home.py")
