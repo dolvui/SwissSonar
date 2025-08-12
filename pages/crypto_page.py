@@ -10,7 +10,9 @@ from onlineTrend import fetch_online_trend
 
 result = fetch_token_24h()
 tokens = []
+times = []
 for e in result:
+    times.append(e["timestamp"])
     token = entity_to_token(e)
     tokens.append(token)
 
@@ -26,19 +28,16 @@ st.title("📊 Crypto Analysis Dashboard")
 # ---- Dashboard Section ----
 st.subheader("Dashboard Overview")
 
+st.subheader("Actions")
 actions1,actions2 = st.columns(2)
 
-st.subheader("Actions")
+
 with actions1:
     if st.button("refresh") :
         tokens, new_ids = swissUpdate.get_swissUpadte()
-
         enriched_tokens = coingeckoAPI.fetch_market_data_fast(tokens, new_ids)
-
         full_tokens = fetch_online_trend(enriched_tokens)
-
         upsert_tokens_entry(full_tokens)
-
         df_tokens = pd.DataFrame([t.dict_data() for t in full_tokens])
 
 with actions2:
@@ -51,8 +50,9 @@ col1, col2, col3, col4 = st.columns(4)
 with col1:
     st.metric("Total Tokens", len(df_tokens))
 with col2:
+    times_recent = pd.DataFrame(times).idmax()
     avg_price = df_tokens["current_price"].mean()
-    st.metric("Average Price", f"${avg_price:,.2f}")
+    st.metric("Average Price", f"${times_recent:,.2f}")
 with col3:
     top_trend = df_tokens.loc[df_tokens["trend_score"].idxmax()]["name"]
     st.metric("Top Trend Token", top_trend)
@@ -77,7 +77,7 @@ else:
 
 # Display table
 st.dataframe(
-    filtered_df[["id","name", "ticker", "current_price", "variation_24h", "market_cap", "trend_score"]],
+    filtered_df[["id","name", "ticker", "current_price", "volume_24h", "market_cap", "trend_score"]],
     use_container_width=True
 )
 
@@ -88,13 +88,10 @@ selected_token = st.selectbox("Select a token for analysis", filtered_df["id"].t
 if st.button("🔎 Analyse"):
     st.success(f"Launching analysis for {selected_token}...")
     data = fetch_token_price(selected_token, days=180)
-    print("------data:")
-    print(data)
-    print("------datra")
     path = "./models/tigerV2_20250807_152739.pt"
     from tigerV2 import run_model_and_plot
     try:
         Bbuff = run_model_and_plot(path, data)
         st.image(Bbuff)
     except:
-        st.error('wait 60 sec before call a another analyse !')
+        st.error('Get limit rate, wait 60 sec before call an analyse !')
