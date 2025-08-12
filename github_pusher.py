@@ -7,8 +7,10 @@ def push_model_to_github(file_path, commit_msg="Add trained model"):
     local_repo = Path("/tmp/repo")
 
     # Clone
-    subprocess.run(["git", "clone", repo_url, local_repo], check=True)
-
+    try:
+        subprocess.run(["git", "clone", repo_url, local_repo], check=True)
+    except:
+        pass
     # Copy file
     dest = local_repo / Path(file_path).name
     subprocess.run(["cp", file_path, dest], check=True)
