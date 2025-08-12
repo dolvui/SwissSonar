@@ -19,6 +19,7 @@ def push_model_to_github(file_path, commit_msg="Add trained model"):
     subprocess.run(["git", "config", "--global", "user.name", "swissSonar"], check=True)
 
     # Commit & push
+    subprocess.run(["git", "pull"], check=True)
     subprocess.run(["git", "-C", str(local_repo), "add", "."], check=True)
     subprocess.run(["git", "-C", str(local_repo), "commit", "-m", commit_msg], check=True)
     subprocess.run(["git", "-C", str(local_repo), "push"], check=True)
