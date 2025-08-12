@@ -5,8 +5,39 @@ import swissUpdate
 from CryptoToken import entity_to_token
 from coingeckoAPI import fetch_token_price
 from mongodb import fetch_token_24h
-from mongodb import upsert_tokens_entry
-from onlineTrend import fetch_online_trend
+from mongodb import upsert_tokens_entry, get_latest_online_trends
+from onlineTrend import fetch_online_trend, compute_heuristics
+
+def tokens_heuristic(df_tokens):
+    heuristics = []
+
+    for token_id in df_tokens["id"]:
+        data = get_latest_online_trends(token_id)
+
+        if len(data) >= 2:
+            google_trend = data[0]['trend_score']
+            youtube_mentions = data[0]['youtube_mentions']
+            reddit_mentions = data[0]['reddit_mentions']
+            previous_google = data[1]['trend_score']
+            previous_youtube = data[1]['youtube_mentions']
+            previous_reddit = data[1]['reddit_mentions']
+
+            heur = compute_heuristics(
+                google_trend,
+                youtube_mentions,
+                reddit_mentions,
+                previous_google,
+                previous_youtube,
+                previous_reddit
+            )
+        else:
+            heur = 1  # default value
+
+        heuristics.append(heur)
+
+    # Add column to DataFrame
+    df_tokens["heuristic"] = heuristics
+    return df_tokens
 
 result = fetch_token_24h()
 tokens = []
@@ -45,6 +76,9 @@ with actions2:
         pass
 
 
+#TODO heur compute
+df_tokens = tokens_heuristic(df_tokens)
+
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
@@ -75,7 +109,7 @@ else:
 
 # Display table
 st.dataframe(
-    filtered_df[["id","name", "ticker", "current_price", "volume_24h", "market_cap", "trend_score"]],
+    filtered_df[["id","name", "ticker", "current_price", "volume_24h", "market_cap", "heuristic"]],
     use_container_width=True
 )
 
