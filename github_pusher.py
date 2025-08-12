@@ -13,6 +13,9 @@ def push_model_to_github(file_path, commit_msg="Add trained model"):
     dest = local_repo / Path(file_path).name
     subprocess.run(["cp", file_path, dest], check=True)
 
+    subprocess.run(["git", "config", "--globals", "user.email", "noa@ghidalia.fr"], check=True)
+    subprocess.run(["git", "config", "--globals", "user.name", "swissSonar"], check=True)
+
     # Commit & push
     subprocess.run(["git", "-C", str(local_repo), "add", "."], check=True)
     subprocess.run(["git", "-C", str(local_repo), "commit", "-m", commit_msg], check=True)
