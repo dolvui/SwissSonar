@@ -141,5 +141,6 @@ if st.button("🔎 Analyse"):
     try:
         Bbuff = run_model_and_plot(path, data)
         st.image(Bbuff)
-    except:
+    except Exception as e:
+        st.write(e)
         st.error('Get limit rate, wait 60 sec before call an analyse !')

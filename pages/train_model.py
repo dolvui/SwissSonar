@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import matplotlib.pyplot as plt
-from github_pusher import push_model_to_github
+from github_pusher import push_model_to_github, delete_model_from_github
 from pathlib import Path
 
 # =========================
@@ -60,7 +60,7 @@ else:
 
         with col3:
             if st.button("🗑 Delete", key=f"del_{model_path}"):
-                #os.remove(model_path)
+                delete_model_from_github(model_path.name)
                 st.warning(f"Deleted `{model_path.name}`")
                 st.rerun()
 
