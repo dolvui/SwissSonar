@@ -40,7 +40,7 @@ MODELS_DIR = Path("models")
 MODELS_DIR.mkdir(exist_ok=True)
 
 # Get list of model files
-model_files = sorted([f.name for f in MODELS_DIR.iterdir() if f.is_file()])
+model_files = sorted([f for f in MODELS_DIR.iterdir() if f.is_file()])
 
 st.subheader("List of available models:")
 
