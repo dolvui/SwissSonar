@@ -39,28 +39,44 @@ save_model = st.sidebar.checkbox("Save model after training", value=True)
 MODELS_DIR = Path("models")
 MODELS_DIR.mkdir(exist_ok=True)
 
-# Get list of model files
-model_files = sorted([f for f in MODELS_DIR.iterdir() if f.is_file()])
+with st.container():
+    st.markdown(
+        """
+        <div style="
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            ">
+        """,
+        unsafe_allow_html=True
+    )
 
-if not model_files:
-    st.info("No models found in the `models/` directory.")
-else:
-    for model_path in model_files:
-        col1, col2, col3 = st.columns([4, 1, 1])
+    # Get list of model files
+    model_files = sorted([f for f in MODELS_DIR.iterdir() if f.is_file()])
 
-        with col1:
-            st.markdown(f"**{model_path.name}**")
+    if not model_files:
+        st.info("No models found in the `models/` directory.")
+    else:
+        for model_path in model_files:
+            with st.container():
+                col1, col2, col3 = st.columns([4, 1, 1])
 
-        with col2:
-            if st.button("📊 Benchmark", key=f"bench_{model_path}"):
-                st.success(f"Benchmarking `{model_path.name}`...")
-                # TODO: Call your benchmarking function here
+                with col1:
+                    st.markdown(f"**{model_path.name}**")
 
-        with col3:
-            if st.button("🗑 Delete", key=f"del_{model_path}"):
-                os.remove(model_path)
-                st.warning(f"Deleted `{model_path.name}`")
-                st.rerun()
+                with col2:
+                    if st.button("📊 Benchmark", key=f"bench_{model_path}"):
+                        st.success(f"Benchmarking `{model_path.name}`...")
+                        # TODO: Call your benchmarking function here
+
+                with col3:
+                    if st.button("🗑 Delete", key=f"del_{model_path}"):
+                        #os.remove(model_path)
+                        st.warning(f"Deleted `{model_path.name}`")
+                        st.rerun()
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # Crypto selection
 cryptos_available = {
