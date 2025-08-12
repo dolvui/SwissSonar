@@ -4,3 +4,4 @@ libgconf-2-4
 libfontconfig1
 chromium
 chromium-driver
+git

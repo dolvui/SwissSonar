@@ -1,11 +1,12 @@
 import streamlit as st
 import pandas as pd
+import datetime
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import matplotlib.pyplot as plt
-import io
+from github_pusher import push_model_to_github
 
 # =========================
 # STREAMLIT CONFIG
@@ -145,5 +146,7 @@ if st.button("🚀 Start Training"):
     pred_chart_placeholder.pyplot(fig_pred)
 
     if save_model:
-        torch.save(model.state_dict(), f"models/tigerV2_{model_name}.pt")
-        st.success(f"Model saved as `{model_name}.pt`")
+        model_path = f"models/tigerV2_{model_name}.pt"
+        torch.save(model.state_dict(), model_path)
+        st.success(f"Model saved as `tigerV2_{model_name}.pt`")
+        push_model_to_github(model_path, commit_msg=f"Add model {model_name} - {datetime.datetime.now()}")
