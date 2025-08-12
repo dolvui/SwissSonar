@@ -50,9 +50,7 @@ col1, col2, col3, col4 = st.columns(4)
 with col1:
     st.metric("Total Tokens", len(df_tokens))
 with col2:
-    import time
-    times_recent = pd.DataFrame([ time.ctime(int(t)) for t in times])
-    st.metric("Last fetch", f"{times_recent.max()}")
+    st.metric("Last fetch", f"{max(times)}")
 with col3:
     top_trend = df_tokens.loc[df_tokens["trend_score"].idxmax()]["name"]
     st.metric("Top Trend Token", top_trend)
