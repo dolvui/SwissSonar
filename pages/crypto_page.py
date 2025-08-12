@@ -50,7 +50,7 @@ col1, col2, col3, col4 = st.columns(4)
 with col1:
     st.metric("Total Tokens", len(df_tokens))
 with col2:
-    times_recent = pd.DataFrame(times).idmax()
+    times_recent = pd.DataFrame(times).max()
     avg_price = df_tokens["current_price"].mean()
     st.metric("Average Price", f"${times_recent:,.2f}")
 with col3:
