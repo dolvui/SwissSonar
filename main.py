@@ -113,4 +113,5 @@ if __name__ == '__main__':
         train()
 
     if not args.train and not args.fetch_coins:
-        st.switch_page("./pages/home.py")
+        home = st.Page("pages/home.py",title="home")
+        st.switch_page(home)
