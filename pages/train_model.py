@@ -27,7 +27,7 @@ window = st.sidebar.number_input("Window size", min_value=5, max_value=60, value
 steps_ahead = st.sidebar.number_input("Steps ahead", min_value=1, max_value=200, value=50)
 
 # Model parameters
-epochs = st.sidebar.number_input("Epochs", min_value=10, max_value=1_000_000, value=500)
+epochs = st.sidebar.number_input("Epochs", min_value=10, max_value=100_000_000_000, value=500)
 learning_rate = st.sidebar.number_input("Learning Rate", min_value=1e-5, max_value=1.0, value=0.001, format="%.5f")
 hidden_size = st.sidebar.slider("Hidden size", min_value=8, max_value=256, value=32, step=8)
 
@@ -39,44 +39,30 @@ save_model = st.sidebar.checkbox("Save model after training", value=True)
 MODELS_DIR = Path("models")
 MODELS_DIR.mkdir(exist_ok=True)
 
-with st.container():
-    st.markdown(
-        """
-        <div style="
-            background-color: #f9f9f9;
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            ">
-        """,
-        unsafe_allow_html=True
-    )
+# Get list of model files
+model_files = sorted([f for f in MODELS_DIR.iterdir() if f.is_file()])
 
-    # Get list of model files
-    model_files = sorted([f for f in MODELS_DIR.iterdir() if f.is_file()])
+st.subheader("List of available models:")
 
-    if not model_files:
-        st.info("No models found in the `models/` directory.")
-    else:
-        for model_path in model_files:
-            with st.container():
-                col1, col2, col3 = st.columns([4, 1, 1])
+if not model_files:
+    st.info("No models found in the `models/` directory.")
+else:
+    for model_path in model_files:
+        col1, col2, col3 = st.columns([4, 1, 1])
 
-                with col1:
-                    st.markdown(f"**{model_path.name}**")
+        with col1:
+            st.markdown(f"**{model_path.name}**")
 
-                with col2:
-                    if st.button("📊 Benchmark", key=f"bench_{model_path}"):
-                        st.success(f"Benchmarking `{model_path.name}`...")
-                        # TODO: Call your benchmarking function here
+        with col2:
+            if st.button("📊 Benchmark", key=f"bench_{model_path}"):
+                st.success(f"Benchmarking `{model_path.name}`...")
+                # TODO: Call your benchmarking function here
 
-                with col3:
-                    if st.button("🗑 Delete", key=f"del_{model_path}"):
-                        #os.remove(model_path)
-                        st.warning(f"Deleted `{model_path.name}`")
-                        st.rerun()
-
-    st.markdown("</div>", unsafe_allow_html=True)
+        with col3:
+            if st.button("🗑 Delete", key=f"del_{model_path}"):
+                #os.remove(model_path)
+                st.warning(f"Deleted `{model_path.name}`")
+                st.rerun()
 
 # Crypto selection
 cryptos_available = {
