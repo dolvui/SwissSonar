@@ -8,6 +8,7 @@ from mongodb import fetch_token_24h
 from mongodb import upsert_tokens_entry, get_latest_online_trends
 from onlineTrend import fetch_online_trend, compute_heuristics
 from analysis_preliminaire import analyse_token
+from pathlib import Path
 
 def tokens_heuristic(df_tokens):
     heuristics = []
@@ -119,6 +120,11 @@ display_options = {
 
 # Selectbox shows nice text, returns the corresponding ID
 selected_display = st.selectbox("Select a token for analysis", list(display_options.keys()))
+
+MODELS_DIR = Path("models")
+model_files = sorted([f for f in MODELS_DIR.iterdir() if f.is_file()])
+selected_models = st.selectbox("Select a models",model_files)
+
 selected_token = display_options[selected_display]
 
 if st.button("🔎 Analyse"):
@@ -129,7 +135,8 @@ if st.button("🔎 Analyse"):
     st.write(f"**Name:** {name} | **Ticker:** {ticker}")
     _, report = analyse_token(name, data, ticker)
     st.write(report)
-    path = "./models/tigerV2_20250807_152739.pt"
+    #path = "./models/tigerV2_20250807_152739.pt"
+    path = f'./models/{selected_models}.pt'
     from tigerV2 import run_model_and_plot
     try:
         Bbuff = run_model_and_plot(path, data)
