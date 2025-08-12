@@ -14,7 +14,10 @@ def push_model_to_github(file_path, commit_msg="Add trained model"):
     except:
         pass
     # Copy file
-    dest = local_repo / Path(file_path).name
+    models_dir = local_repo / "models"
+    #models_dir.mkdir(parents=True, exist_ok=True)
+
+    dest = models_dir / Path(file_path).name
     subprocess.run(["cp", file_path, dest], check=True)
 
     subprocess.run(["git", "config", "--global", "user.email", "noa@ghidalia.fr"], check=True)
