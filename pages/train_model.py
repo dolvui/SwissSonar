@@ -7,6 +7,7 @@ import torch.nn as nn
 import torch.optim as optim
 import matplotlib.pyplot as plt
 from github_pusher import push_model_to_github
+from pathlib import Path
 
 # =========================
 # STREAMLIT CONFIG
@@ -33,6 +34,33 @@ hidden_size = st.sidebar.slider("Hidden size", min_value=8, max_value=256, value
 # Model save info
 model_name = st.sidebar.text_input("Model Name", value="my_model")
 save_model = st.sidebar.checkbox("Save model after training", value=True)
+
+# Path to your models directory
+MODELS_DIR = Path("models")
+MODELS_DIR.mkdir(exist_ok=True)
+
+# Get list of model files
+model_files = sorted([f for f in MODELS_DIR.iterdir() if f.is_file()])
+
+if not model_files:
+    st.info("No models found in the `models/` directory.")
+else:
+    for model_path in model_files:
+        col1, col2, col3 = st.columns([4, 1, 1])
+
+        with col1:
+            st.markdown(f"**{model_path.name}**")
+
+        with col2:
+            if st.button("📊 Benchmark", key=f"bench_{model_path}"):
+                st.success(f"Benchmarking `{model_path.name}`...")
+                # TODO: Call your benchmarking function here
+
+        with col3:
+            if st.button("🗑 Delete", key=f"del_{model_path}"):
+                os.remove(model_path)
+                st.warning(f"Deleted `{model_path.name}`")
+                st.rerun()
 
 # Crypto selection
 cryptos_available = {
