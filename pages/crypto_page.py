@@ -53,7 +53,7 @@ df_tokens = pd.DataFrame([t.dict_data() for t in tokens])
 # ========================
 # FRONT PAGE LAYOUT
 # ========================
-st.set_page_config(page_title="Crypto Analysis Dashboard", layout="wide")
+st.set_page_config(page_title="Crypto Analysis Dashboard", layout="wide", page_icon="📊")
 
 st.title("📊 Crypto Analysis Dashboard")
 
@@ -62,7 +62,6 @@ st.subheader("Dashboard Overview")
 
 st.subheader("Actions")
 actions1,actions2 = st.columns(2)
-
 
 with actions1:
     if st.button("refresh") :
@@ -74,7 +73,7 @@ with actions1:
 
 with actions2:
     if st.button("Train my own model"):
-        pass
+        st.switch_page("pages/train_model.py")
 
 df_tokens = tokens_heuristic(df_tokens)
 
@@ -112,17 +111,22 @@ st.dataframe(
     use_container_width=True
 )
 
-selected_token = st.selectbox("Select a token for analysis", filtered_df["id"].tolist())
+# Create mapping from display name to ID
+display_options = {
+    f"{row['name']} ({row['ticker']})": row['id']
+    for _, row in filtered_df.iterrows()
+}
 
-
-row = filtered_df.loc[filtered_df["id"] == selected_token].iloc[0]
-
-name = row["name"]
-ticker = row["ticker"]
+# Selectbox shows nice text, returns the corresponding ID
+selected_display = st.selectbox("Select a token for analysis", list(display_options.keys()))
+selected_token = display_options[selected_display]
 
 if st.button("🔎 Analyse"):
     st.success(f"Launching analysis for {selected_token}...")
     data = fetch_token_price(selected_token, days=180)
+    name, ticker = selected_display.split(" (")
+    ticker = ticker.rstrip(")")
+    st.write(f"**Name:** {name} | **Ticker:** {ticker}")
     _, report = analyse_token(name, data, ticker)
     st.write(report)
     path = "./models/tigerV2_20250807_152739.pt"
