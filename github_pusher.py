@@ -1,11 +1,13 @@
 import subprocess
 from pathlib import Path
 import streamlit as st
+import shutil
 
 def push_model_to_github(file_path, commit_msg="Add trained model"):
     repo_url = f"https://{st.secrets['github']['github_token']}@github.com/{st.secrets['github']['repo_name']}.git"
     local_repo = Path("/tmp/repo")
-
+    if local_repo.exists():
+        shutil.rmtree(local_repo)
     # Clone
     try:
         subprocess.run(["git", "clone", repo_url, local_repo], check=True)
