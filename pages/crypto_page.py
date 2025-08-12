@@ -136,7 +136,7 @@ if st.button("🔎 Analyse"):
     _, report = analyse_token(name, data, ticker)
     st.write(report)
     #path = "./models/tigerV2_20250807_152739.pt"
-    path = f'./models/{selected_models}.pt'
+    path = f'./models/{selected_models}'
     from tigerV2 import run_model_and_plot
     try:
         Bbuff = run_model_and_plot(path, data)

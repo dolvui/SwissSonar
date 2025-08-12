@@ -2,6 +2,7 @@ import subprocess
 from pathlib import Path
 import streamlit as st
 import shutil
+import os
 
 def push_model_to_github(file_path, commit_msg="Add trained model"):
     repo_url = f"https://{st.secrets['github']['github_token']}@github.com/{st.secrets['github']['repo_name']}.git"
