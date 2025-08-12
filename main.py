@@ -114,14 +114,13 @@ if __name__ == '__main__':
 
     if not args.train and not args.fetch_coins:
         pages = {
-            "Your account": [
-                st.Page("pages/home.py", title="Create your account"),
-                st.Page("pages/home.py", title="login"),
+            "Home": [
+                st.Page("pages/home.py", title="Home page"),
             ],
             "Resources": [
                 st.Page("pages/crypto_page.py", title="Crypto tools"),
             ],
         }
-        home = st.Page("pages/home.py",title="home",icon="🏠")
+        #home = st.Page("pages/home.py",title="home",icon="🏠")
         pg = st.navigation(pages,position="top")
         pg.run()
