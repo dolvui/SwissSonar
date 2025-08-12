@@ -45,7 +45,7 @@ with actions2:
         pass
 
 
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3, col4 = st.columns(4,gap="small")
 
 with col1:
     st.metric("Total Tokens", len(df_tokens))
