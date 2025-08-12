@@ -114,11 +114,15 @@ st.dataframe(
 
 selected_token = st.selectbox("Select a token for analysis", filtered_df["id"].tolist())
 
+
+row = filtered_df.loc[filtered_df["id"] == selected_token].iloc[0]
+
+name = row["name"]
+ticker = row["ticker"]
+
 if st.button("🔎 Analyse"):
     st.success(f"Launching analysis for {selected_token}...")
     data = fetch_token_price(selected_token, days=180)
-    name = filtered_df[selected_token]["name"]
-    ticker = filtered_df[selected_token]["ticker"]
     _, report = analyse_token(name, data, ticker)
     st.write(report)
     path = "./models/tigerV2_20250807_152739.pt"
