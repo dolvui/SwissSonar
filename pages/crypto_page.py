@@ -73,7 +73,7 @@ with actions1:
 
 with actions2:
     if st.button("Train my own model"):
-        st.switch_page("pages/train_model.py")
+        st.switch_page("train_model.py")
 
 df_tokens = tokens_heuristic(df_tokens)
 
