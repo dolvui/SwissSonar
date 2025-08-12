@@ -7,6 +7,7 @@ from coingeckoAPI import fetch_token_price
 from mongodb import fetch_token_24h
 from mongodb import upsert_tokens_entry, get_latest_online_trends
 from onlineTrend import fetch_online_trend, compute_heuristics
+from analysis_preliminaire import analyse_token
 
 def tokens_heuristic(df_tokens):
     heuristics = []
@@ -75,8 +76,6 @@ with actions2:
     if st.button("Train my own model"):
         pass
 
-
-#TODO heur compute
 df_tokens = tokens_heuristic(df_tokens)
 
 col1, col2, col3, col4 = st.columns(4)
@@ -87,7 +86,7 @@ with col2:
     top_marketcap = df_tokens.loc[df_tokens["market_cap"].idxmax()]["name"]
     st.metric("Highest Market Cap", top_marketcap)
 with col3:
-    top_trend = df_tokens.loc[df_tokens["trend_score"].idxmax()]["name"]
+    top_trend = df_tokens.loc[df_tokens["heuristic"].idxmax()]["name"]
     st.metric("Top Trend Token", top_trend)
 with col4:
     st.metric("Last fetch", f"{max(times)}")
@@ -113,13 +112,15 @@ st.dataframe(
     use_container_width=True
 )
 
-# Select a token
 selected_token = st.selectbox("Select a token for analysis", filtered_df["id"].tolist())
 
-# Analyse button
 if st.button("🔎 Analyse"):
     st.success(f"Launching analysis for {selected_token}...")
     data = fetch_token_price(selected_token, days=180)
+    name = filtered_df[selected_token]["name"]
+    ticker = filtered_df[selected_token]["ticker"]
+    _, report = analyse_token(name, data, ticker)
+    st.write(report)
     path = "./models/tigerV2_20250807_152739.pt"
     from tigerV2 import run_model_and_plot
     try:
