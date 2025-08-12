@@ -25,7 +25,7 @@ with col1:
     st.markdown("### 💹 Crypto")
     st.write("Analysis, tracking, and prediction tools for cryptocurrency markets.")
     if st.button("Open Crypto Tools", key="crypto"):
-        st.switch_page("streamlit/crypto_page.py")
+        st.switch_page("pages/crypto_page.py")
 
 with col2:
     st.markdown("### 🏴‍☠️ One Piece")
