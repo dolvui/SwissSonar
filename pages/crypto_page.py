@@ -45,18 +45,18 @@ with actions2:
         pass
 
 
-col1, col2, col3, col4 = st.columns(4,gap="small")
+col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.metric("Total Tokens", len(df_tokens))
 with col2:
-    st.metric("Last fetch", f"{max(times)}")
+    top_marketcap = df_tokens.loc[df_tokens["market_cap"].idxmax()]["name"]
+    st.metric("Highest Market Cap", top_marketcap)
 with col3:
     top_trend = df_tokens.loc[df_tokens["trend_score"].idxmax()]["name"]
     st.metric("Top Trend Token", top_trend)
 with col4:
-    top_marketcap = df_tokens.loc[df_tokens["market_cap"].idxmax()]["name"]
-    st.metric("Highest Market Cap", top_marketcap)
+    st.metric("Last fetch", f"{max(times)}")
 
 st.markdown("---")
 
