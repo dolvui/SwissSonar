@@ -94,6 +94,7 @@ def from_database():
 
     process_token(tokensScore)
 
+
 if __name__ == '__main__':
     import argparse
 
