@@ -129,7 +129,11 @@ def build_multi_crypto_dataset(fetch_fn, cryptos, days, window, steps_ahead):
     norms = {}
 
     for name, gecko_id in cryptos.items():
-        data = fetch_fn(gecko_id, days=days)
+        data = []
+        try:
+            data = fetch_fn(gecko_id, days=days)
+        except Exception as e:
+            print(e)
         prices = np.array([float(e[1]) for e in data['prices']], dtype=np.float32)
         mean, std = prices.mean(), prices.std()
         norms[name] = (mean, std)
