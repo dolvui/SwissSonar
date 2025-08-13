@@ -165,6 +165,7 @@ def train_model():
     criterion = nn.MSELoss()
 
     losses = []
+    progress_bar = st.progress(0)
     for epoch in range(epochs):
         model.train()
         optimizer.zero_grad()
@@ -173,7 +174,8 @@ def train_model():
         loss.backward()
         optimizer.step()
         losses.append(loss.item())
-
+        if epoch % max(1, epochs // 100) == 0:
+            progress_bar.progress((epoch + 1) / epochs)
     # Evaluate on test set
     model.eval()
     with torch.no_grad():
