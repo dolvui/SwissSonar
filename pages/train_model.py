@@ -8,7 +8,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 from coingeckoAPI import fetch_token_price
-from github_pusher import delete_model_from_github, push_model_to_github
+from github_pusher import delete_model_from_github, request_training
 from scripts.model_trainner import benchmark_model
 
 # =========================
@@ -114,6 +114,6 @@ if st.button("🚀 Start Training"):
         }
     id = insert_model_github(data)
     if id:
-        push_model_to_github(id)
+        request_training(id)
     else:
         st.error("An error occurs !")

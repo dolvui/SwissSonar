@@ -18,7 +18,7 @@ jobs:
         run: |
           for file in jobs/*.txt; do
             model_id=$(cut -d',' -f1 $file)
-            python --train $model_id
+            python main.py --train $model_id
             rm "$file"
           done
       - name: Commit results

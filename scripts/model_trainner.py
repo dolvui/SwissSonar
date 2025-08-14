@@ -4,8 +4,8 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from pathlib import Path
 from coingeckoAPI import fetch_token_price
+from github_pusher import push_model_to_github
 
 class PriceLSTM(nn.Module):
     def __init__(self, input_size=1, hidden_size=32, output_steps=5, dropout=0.2):
@@ -167,3 +167,9 @@ def launch_train_model(id):
     from sqliteModels import fetch_models_by_id
     model_dict = fetch_models_by_id(id)
     model, losses, test_loss, norms = train_model(model_dict["name"],model_dict["days"], model_dict["windows"], model_dict["steps"], model_dict["epochs"], model_dict["lr"], model_dict["hidden"])
+    model_path = f"models/tigerV2_{model_dict["name"]}.pt"
+    norms_path = f"models/tigerV2_{model_dict["name"]}_norms.npy"
+    torch.save(model.state_dict(), model_path)
+    np.save(norms_path, norms)
+    files = [model_path, norms_path]
+    push_model_to_github(files, commit_msg=f"Add model {model_dict["name"]}-{id}-{datetime.datetime.now()}")

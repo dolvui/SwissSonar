@@ -5,8 +5,12 @@ import shutil
 import os
 from datetime import datetime
 
-def push_model_to_github(files_path, commit_msg="Add trained model"):
-    repo_url = f"https://{st.secrets['github']['github_token']}@github.com/{st.secrets['github']['repo_name']}.git"
+def push_model_to_github(files_path, commit_msg="Add trained model",token=None,repo=None):
+    if token is None:
+        token = st.secrets['github']['github_token']
+    if repo is None:
+        repo = st.secrets['github']['repo_name']
+    repo_url = f"https://{token}@github.com/{repo}.git"
     local_repo = Path("/tmp/repo")
     if local_repo.exists():
         shutil.rmtree(local_repo)
@@ -64,7 +68,7 @@ def delete_model_from_github(model_name, commit_msg="Delete model"):
     subprocess.run(["git", "-C", str(local_repo), "push"], check=True)
 
 #TODO change for id and use database
-def request_training(model_name, epochs):
+def request_training(id):
     repo_url = f"https://{st.secrets['github']['github_token']}@github.com/{st.secrets['github']['repo_name']}.git"
     local_repo = Path("/tmp/repo")
     if local_repo.exists():
@@ -73,9 +77,9 @@ def request_training(model_name, epochs):
 
     jobs_dir = local_repo / "jobs"
     jobs_dir.mkdir(exist_ok=True)
-    job_file = jobs_dir / f"train_{model_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-    job_file.write_text(f"{model_name},{epochs}")
+    job_file = jobs_dir / f"train_{id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+    job_file.write_text(f"{id}")
 
     subprocess.run(["git", "-C", str(local_repo), "add", "."], check=True)
-    subprocess.run(["git", "-C", str(local_repo), "commit", "-m", f"Request training for {model_name}"], check=True)
+    subprocess.run(["git", "-C", str(local_repo), "commit", "-m", f"Request training for model id : {id}"], check=True)
     subprocess.run(["git", "-C", str(local_repo), "push"], check=True)
