@@ -4,7 +4,7 @@ import streamlit as st
 import shutil
 import os
 
-def push_model_to_github(file_path, commit_msg="Add trained model"):
+def push_model_to_github(files_path, commit_msg="Add trained model"):
     repo_url = f"https://{st.secrets['github']['github_token']}@github.com/{st.secrets['github']['repo_name']}.git"
     local_repo = Path("/tmp/repo")
     if local_repo.exists():
@@ -18,8 +18,9 @@ def push_model_to_github(file_path, commit_msg="Add trained model"):
     models_dir = local_repo / "models"
     #models_dir.mkdir(parents=True, exist_ok=True)
 
-    dest = models_dir / Path(file_path).name
-    subprocess.run(["cp", file_path, dest], check=True)
+    for path in files_path:
+        dest = models_dir / Path(path).name
+        subprocess.run(["cp", path, dest], check=True)
 
     subprocess.run(["git", "config", "--global", "user.email", "noa@ghidalia.fr"], check=True)
     subprocess.run(["git", "config", "--global", "user.name", "swissSonar"], check=True)

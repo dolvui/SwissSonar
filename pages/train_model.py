@@ -98,7 +98,11 @@ else:
                 else:
                     norms = {}
 
-                selected_crypto_key = st.selectbox("Select crypto for benchmark", options=cryptos_available.keys())
+                selected_crypto_key = None#st.selectbox("Select crypto for benchmark", options=cryptos_available.keys())
+
+                while not selected_crypto_key:
+                    selected_crypto_key = st.selectbox("Select crypto for benchmark", options=cryptos_available.keys())
+
                 crypto_id = cryptos_available[selected_crypto_key]
 
                 fig, mse, mae = benchmark_model(model_path, crypto_id, days, window, steps_ahead, norms)
@@ -244,5 +248,6 @@ if st.button("🚀 Start Training"):
         torch.save(model.state_dict(), model_path)
         np.save(norms_path, norms)
         st.success(f"Model saved as `tigerV2_{model_name}.pt`")
-        push_model_to_github(model_path, commit_msg=f"Add model {model_name} - {datetime.datetime.now()}")
-        push_model_to_github(norms_path, commit_msg=f"Add norms for {model_name} - {datetime.datetime.now()}")
+        files = [model_path,norms_path]
+        push_model_to_github(files, commit_msg=f"Add model {model_name} - {datetime.datetime.now()}")
+        #push_model_to_github(norms_path, commit_msg=f"Add norms for {model_name} - {datetime.datetime.now()}")
