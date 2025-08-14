@@ -7,7 +7,7 @@ cursor = conn.cursor()
 
 def init_db():
     cursor.execute("""
-    CREATE TABLE models (
+    CREATE TABLE IF NOT EXISTS models (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         path TEXT,
