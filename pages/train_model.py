@@ -51,7 +51,7 @@ cryptos_available = {
     "SOL": "wrapped-solana"
 }
 
-def benchmark_model(model, norms, crypto_id, days, window, steps_ahead):
+def benchmark_model(model_path, crypto_id, days, window, steps_ahead,norms):
 
     data = fetch_token_price(crypto_id, days=days)
     print(crypto_id)
@@ -63,7 +63,7 @@ def benchmark_model(model, norms, crypto_id, days, window, steps_ahead):
 
     # Last window for prediction
     last_window = torch.tensor(prices_norm[-window:], dtype=torch.float32).unsqueeze(0).unsqueeze(2)
-
+    model.load_state_dict(torch.load(model_path))
     model.eval()
     with torch.no_grad():
         pred_norm = model(last_window).numpy().flatten()
