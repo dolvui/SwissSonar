@@ -122,7 +122,7 @@ display_options = {
 selected_display = st.selectbox("Select a token for analysis", list(display_options.keys()))
 
 MODELS_DIR = Path("models")
-model_files = sorted([f.name for f in MODELS_DIR.iterdir() if f.is_file()])
+model_files = sorted([f.name for f in MODELS_DIR.iterdir() if f.is_file() and f.name.endswith(".pt")])
 selected_models = st.selectbox("Select a models",model_files)
 
 selected_token = display_options[selected_display]
