@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import datetime , timedelta
 
-conn = sqlite3.connect("crypto_tracker.db")
+conn = sqlite3.connect("old_files/crypto_tracker.db")
 conn.row_factory = sqlite3.Row
 cursor = conn.cursor()
 

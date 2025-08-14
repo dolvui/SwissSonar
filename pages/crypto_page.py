@@ -41,16 +41,19 @@ def tokens_heuristic(df_tokens):
     df_tokens["heuristic"] = heuristics
     return df_tokens
 
-result = fetch_token_24h()
 tokens = []
 times = []
-for e in result:
-    times.append(e["timestamp"])
-    token = entity_to_token(e)
-    tokens.append(token)
+df_tokens = None
 
-#tokensScore = sort_token(tokens)
-df_tokens = pd.DataFrame([t.dict_data() for t in tokens])
+if "loaded" not in st.session_state:
+    result = fetch_token_24h()
+    for e in result:
+        times.append(e["timestamp"])
+        token = entity_to_token(e)
+        tokens.append(token)
+
+    df_tokens = pd.DataFrame([t.dict_data() for t in tokens])
+    df_tokens = tokens_heuristic(df_tokens)
 # ========================
 # FRONT PAGE LAYOUT
 # ========================
@@ -71,12 +74,11 @@ with actions1:
         full_tokens = fetch_online_trend(enriched_tokens)
         upsert_tokens_entry(full_tokens)
         df_tokens = pd.DataFrame([t.dict_data() for t in full_tokens])
+        df_tokens = tokens_heuristic(df_tokens)
 
 with actions2:
     if st.button("Train my own model"):
         st.switch_page("pages/train_model.py")
-
-df_tokens = tokens_heuristic(df_tokens)
 
 col1, col2, col3, col4 = st.columns(4)
 
@@ -135,12 +137,10 @@ if st.button("🔎 Analyse"):
     st.write(f"**Name:** {name} | **Ticker:** {ticker}")
     _, report = analyse_token(name, data, ticker)
     st.write(report)
-    #path = "./models/tigerV2_20250807_152739.pt"
     path = f'./models/{selected_models}'
-    from tigerV2 import run_model_and_plot
+    from scripts.model_trainner import run_model_and_plot
     try:
-        Bbuff = run_model_and_plot(path, data)
-        st.image(Bbuff)
+        st.image(run_model_and_plot(path, data))
     except Exception as e:
         st.write(e)
         st.error('Get limit rate, wait 60 sec before call an analyse !')

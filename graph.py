@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 
 def plot_top_mentions():
-    conn = sqlite3.connect("crypto_tracker.db")
+    conn = sqlite3.connect("old_files/crypto_tracker.db")
     cursor = conn.cursor()
 
     cursor.execute("""

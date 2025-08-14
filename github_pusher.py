@@ -3,6 +3,7 @@ from pathlib import Path
 import streamlit as st
 import shutil
 import os
+from datetime import datetime
 
 def push_model_to_github(files_path, commit_msg="Add trained model"):
     repo_url = f"https://{st.secrets['github']['github_token']}@github.com/{st.secrets['github']['repo_name']}.git"
@@ -60,4 +61,21 @@ def delete_model_from_github(model_name, commit_msg="Delete model"):
     # Commit & push
     subprocess.run(["git", "-C", str(local_repo), "add", "."], check=True)
     subprocess.run(["git", "-C", str(local_repo), "commit", "-m", commit_msg], check=True)
+    subprocess.run(["git", "-C", str(local_repo), "push"], check=True)
+
+#TODO change for id and use database
+def request_training(model_name, epochs):
+    repo_url = f"https://{st.secrets['github']['github_token']}@github.com/{st.secrets['github']['repo_name']}.git"
+    local_repo = Path("/tmp/repo")
+    if local_repo.exists():
+        shutil.rmtree(local_repo)
+    subprocess.run(["git", "clone", repo_url, local_repo], check=True)
+
+    jobs_dir = local_repo / "jobs"
+    jobs_dir.mkdir(exist_ok=True)
+    job_file = jobs_dir / f"train_{model_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+    job_file.write_text(f"{model_name},{epochs}")
+
+    subprocess.run(["git", "-C", str(local_repo), "add", "."], check=True)
+    subprocess.run(["git", "-C", str(local_repo), "commit", "-m", f"Request training for {model_name}"], check=True)
     subprocess.run(["git", "-C", str(local_repo), "push"], check=True)

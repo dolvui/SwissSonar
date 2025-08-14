@@ -1,0 +1,30 @@
+name: Model Trainer
+on:
+  push:
+    paths:
+      - "jobs/*.txt"
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - run: pip install -r requirements.txt
+      - name: Run training
+        run: |
+          for file in jobs/*.txt; do
+            model_id=$(cut -d',' -f1 $file)
+            python --train $model_id
+            rm "$file"
+          done
+      - name: Commit results
+        run: |
+          git config --global user.email "noa@ghidalia.fr"
+          git config --global user.name "swissSonar"
+          git add .
+          git commit -m "Add trained model(s)"
+          git push
