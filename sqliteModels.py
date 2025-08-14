@@ -7,7 +7,7 @@ cursor = conn.cursor()
 
 def init_db():
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS models (
+    CREATE TABLE models (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         path TEXT,
@@ -32,7 +32,7 @@ def insert_models(data: dict):
     conn.commit()
 
 def insert_model_github(data: dict):
-    cursor.execute("""INSERT INTO models(name, path, days, windows, steps, epochs, lr, hidden)
+    cursor.execute("""INSERT INTO models (name, path, days, windows, steps, epochs, lr, hidden)
     VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (data["name"], data["path"], data["days"], data["windows"], data["steps"],data["epochs"],data["lr"],data["hidden"]))
     conn.commit()
