@@ -45,6 +45,42 @@ model_files = sorted([f for f in MODELS_DIR.iterdir() if f.is_file()])
 
 st.subheader("List of available models:")
 
+cryptos_available = {
+    "BNB": "binance-coin-wormhole",
+    "BTC": "osmosis-allbtc",
+    "SOL": "wrapped-solana"
+}
+
+def benchmark_model(model, norms, crypto_id, days, window, steps_ahead):
+    data = fetch_token_price(crypto_id, days=days)
+    prices = np.array([float(e[1]) for e in data['prices']], dtype=np.float32)
+
+    mean, std = norms.get(crypto_id, (prices.mean(), prices.std()))
+    prices_norm = (prices - mean) / std
+
+    # Last window for prediction
+    last_window = torch.tensor(prices_norm[-window:], dtype=torch.float32).unsqueeze(0).unsqueeze(2)
+
+    model.eval()
+    with torch.no_grad():
+        pred_norm = model(last_window).numpy().flatten()
+
+    # Unnormalize
+    pred_prices = pred_norm * std + mean
+    actual_prices = prices[-steps_ahead:]
+
+    mse = np.mean((pred_prices - actual_prices) ** 2)
+    mae = np.mean(np.abs(pred_prices - actual_prices))
+
+    # Plot
+    fig, ax = plt.subplots()
+    ax.plot(range(len(actual_prices)), actual_prices, label="Actual", color="black")
+    ax.plot(range(len(pred_prices)), pred_prices, label="Predicted", color="red")
+    ax.legend()
+    ax.set_title(f"Benchmark for {crypto_id} - MSE: {mse:.4f}, MAE: {mae:.4f}")
+
+    return fig, mse, mae
+
 if not model_files:
     st.info("No models found in the `models/` directory.")
 else:
@@ -75,11 +111,6 @@ else:
                 st.rerun()
 
 # Crypto selection
-cryptos_available = {
-    "BNB": "binance-coin-wormhole",
-    "BTC": "osmosis-allbtc",
-    "SOL": "wrapped-solana"
-}
 selected_cryptos = st.sidebar.multiselect(
     "Select Cryptos",
     options=list(cryptos_available.keys()),
@@ -182,37 +213,6 @@ def train_model():
         test_loss = criterion(model(X_test_tensor), Y_test_tensor).item()
 
     return model, losses, test_loss, norms
-
-
-def benchmark_model(model, norms, crypto_id, days, window, steps_ahead):
-    data = fetch_token_price(crypto_id, days=days)
-    prices = np.array([float(e[1]) for e in data['prices']], dtype=np.float32)
-
-    mean, std = norms.get(crypto_id, (prices.mean(), prices.std()))
-    prices_norm = (prices - mean) / std
-
-    # Last window for prediction
-    last_window = torch.tensor(prices_norm[-window:], dtype=torch.float32).unsqueeze(0).unsqueeze(2)
-
-    model.eval()
-    with torch.no_grad():
-        pred_norm = model(last_window).numpy().flatten()
-
-    # Unnormalize
-    pred_prices = pred_norm * std + mean
-    actual_prices = prices[-steps_ahead:]
-
-    mse = np.mean((pred_prices - actual_prices) ** 2)
-    mae = np.mean(np.abs(pred_prices - actual_prices))
-
-    # Plot
-    fig, ax = plt.subplots()
-    ax.plot(range(len(actual_prices)), actual_prices, label="Actual", color="black")
-    ax.plot(range(len(pred_prices)), pred_prices, label="Predicted", color="red")
-    ax.legend()
-    ax.set_title(f"Benchmark for {crypto_id} - MSE: {mse:.4f}, MAE: {mae:.4f}")
-
-    return fig, mse, mae
 
 # =========================
 # RUN TRAINING
