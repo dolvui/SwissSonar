@@ -64,7 +64,7 @@ def entity_to_token(dict):
     token.id = dict["gecko_id"]
     token.name = dict["name"]
     token.ticker = dict["ticker"]
-    token.price = f"${dict["current_price"]}"
+    token.price = f'${dict["current_price"]}'
     #token.variation_24h = dict["variation_24h"]
     token.category = dict["category"]
     token.current_price = dict["current_price"]
