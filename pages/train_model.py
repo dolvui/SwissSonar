@@ -52,7 +52,10 @@ cryptos_available = {
 }
 
 def benchmark_model(model, norms, crypto_id, days, window, steps_ahead):
+
     data = fetch_token_price(crypto_id, days=days)
+    print(crypto_id)
+    print(data)
     prices = np.array([float(e[1]) for e in data['prices']], dtype=np.float32)
 
     mean, std = norms.get(crypto_id, (prices.mean(), prices.std()))
@@ -98,10 +101,7 @@ else:
                 else:
                     norms = {}
 
-                selected_crypto_key = None#st.selectbox("Select crypto for benchmark", options=cryptos_available.keys())
-
-                while not selected_crypto_key:
-                    selected_crypto_key = st.selectbox("Select crypto for benchmark", options=cryptos_available.keys())
+                selected_crypto_key = st.selectbox("Select crypto for benchmark", options=cryptos_available.keys())
 
                 crypto_id = cryptos_available[selected_crypto_key]
 
