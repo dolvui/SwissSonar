@@ -15,7 +15,7 @@ if __name__ == '__main__':
     if args.train:
         from scripts.model_trainner import launch_train_model
         launch_train_model(int(args.train))
-    if not args.train and not args.fetch_coins:
+    if not args.train and not args.refresh_coins:
         pages = {
             "Home": [
                 st.Page("pages/home.py", title="Home page"),
