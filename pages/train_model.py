@@ -10,6 +10,20 @@ from github_pusher import push_model_to_github, delete_model_from_github
 from pathlib import Path
 from coingeckoAPI import fetch_token_price
 
+class PriceLSTM(nn.Module):
+    def __init__(self, input_size=1, hidden_size=32, output_steps=5, dropout=0.2):
+        super().__init__()
+        self.lstm = nn.LSTM(input_size, hidden_size, batch_first=True)
+        self.dropout = nn.Dropout(dropout)
+        self.fc = nn.Linear(hidden_size, output_steps)
+
+    def forward(self, x):
+        out, _ = self.lstm(x)
+        out = self.dropout(out[:, -1, :])
+        out = self.fc(out)
+        return out
+
+
 # =========================
 # STREAMLIT CONFIG
 # =========================
@@ -132,20 +146,6 @@ pred_chart_placeholder = col2.empty()
 # =========================
 # MODEL TRAINING
 # =========================
-
-class PriceLSTM(nn.Module):
-    def __init__(self, input_size=1, hidden_size=32, output_steps=5, dropout=0.2):
-        super().__init__()
-        self.lstm = nn.LSTM(input_size, hidden_size, batch_first=True)
-        self.dropout = nn.Dropout(dropout)
-        self.fc = nn.Linear(hidden_size, output_steps)
-
-    def forward(self, x):
-        out, _ = self.lstm(x)
-        out = self.dropout(out[:, -1, :])
-        out = self.fc(out)
-        return out
-
 
 def build_sequences(data, window, steps_ahead):
     X, Y = [], []
