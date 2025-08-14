@@ -166,6 +166,7 @@ def run_model_and_plot(model_path, data, window=15, steps_ahead=50):
 def launch_train_model(id):
     from sqliteModels import fetch_models_by_id
     model_dict = fetch_models_by_id(id)
+    model_dict = model_dict[0]
     name = model_dict["name"]
     model, losses, test_loss, norms = train_model(name,model_dict["days"], model_dict["windows"], model_dict["steps"], model_dict["epochs"], model_dict["lr"], model_dict["hidden"])
     model_path = f"models/tigerV2_{name}.pt"
