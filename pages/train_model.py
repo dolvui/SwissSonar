@@ -103,7 +103,7 @@ else:
 
                 selected_crypto_key = st.selectbox("Select crypto for benchmark", options=cryptos_available.keys())
 
-                crypto_id = cryptos_available[selected_crypto_key]
+                crypto_id = "binance-coin-wormhole"#cryptos_available[selected_crypto_key]
 
                 fig, mse, mae = benchmark_model(model_path, crypto_id, days, window, steps_ahead, norms)
                 st.pyplot(fig)
