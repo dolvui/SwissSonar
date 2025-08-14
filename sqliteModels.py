@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import datetime , timedelta
 
-conn = sqlite3.connect("models.db")
+conn = sqlite3.connect("models.db",check_same_thread=False)
 conn.row_factory = sqlite3.Row
 cursor = conn.cursor()
 
