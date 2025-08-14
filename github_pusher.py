@@ -80,6 +80,9 @@ def request_training(id):
     job_file = jobs_dir / f"train_{id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
     job_file.write_text(f"{id}")
 
+    subprocess.run(["git", "config", "--global", "user.email", "noa@ghidalia.fr"], check=True)
+    subprocess.run(["git", "config", "--global", "user.name", "swissSonar"], check=True)
+
     subprocess.run(["git", "-C", str(local_repo), "add", "."], check=True)
     subprocess.run(["git", "-C", str(local_repo), "commit", "-m", f"Request training for model id : {id}"], check=True)
     subprocess.run(["git", "-C", str(local_repo), "push"], check=True)
