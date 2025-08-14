@@ -33,7 +33,7 @@ def insert_models(data: dict):
 
 def insert_model_github(data: dict):
     cursor.execute("""INSERT INTO models (name, path, days, windows, steps, epochs, lr, hidden)
-    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES(?, ?, ?, ?, ?, ?, ?, ?)
     """, (data["name"], data["path"], data["days"], data["windows"], data["steps"],data["epochs"],data["lr"],data["hidden"]))
     conn.commit()
     cursor.execute(""" SELECT id FROM models WHERE name = ?""", (data["name"],))

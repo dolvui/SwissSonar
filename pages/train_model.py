@@ -100,7 +100,8 @@ pred_chart_placeholder = col2.empty()
 # RUN TRAINING
 # =========================
 if st.button("🚀 Start Training"):
-    st.write(f"model is gone for training come back later \n param: days : {days},window :{window},steps_ahead :{steps_ahead},epochs :{epochs},learning_rate :{learning_rate},hidden_size :{hidden_size},model_name :{model_name}")
+    st.write(f"model is gone for training come back later \n")
+    st.write(f"Params are days : {days},window :{window},steps_ahead :{steps_ahead},epochs :{epochs},learning_rate :{learning_rate},hidden_size :{hidden_size},model_name :{model_name}")
     from sqliteModels import insert_model_github
     data = {
         "name" : model_name,
