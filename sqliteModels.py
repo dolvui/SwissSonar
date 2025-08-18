@@ -1,7 +1,16 @@
 import sqlite3
+import shutil
+from pathlib import Path
 from datetime import datetime , timedelta
 
-conn = sqlite3.connect("models.db",check_same_thread=False)
+DB_PATH = Path("/tmp/models.db")
+
+if not DB_PATH.exists():
+    repo_db = Path("models.db")
+    if repo_db.exists():
+        shutil.copy(repo_db, DB_PATH)
+
+conn = sqlite3.connect(DB_PATH,check_same_thread=False)
 conn.row_factory = sqlite3.Row
 cursor = conn.cursor()
 
