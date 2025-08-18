@@ -1,13 +1,8 @@
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import numpy as np
 import streamlit as st
-import torch
-import torch.nn as nn
-import torch.optim as optim
 
-from coingeckoAPI import fetch_token_price
 from github_pusher import delete_model_from_github, request_training, push_db_to_github
 from scripts.model_trainner import benchmark_model
 
@@ -102,7 +97,7 @@ pred_chart_placeholder = col2.empty()
 if st.button("🚀 Start Training"):
     st.write(f"model is gone for training come back later \n")
     st.write(f"Params are days : {days},window :{window},steps_ahead :{steps_ahead},epochs :{epochs},learning_rate :{learning_rate},hidden_size :{hidden_size},model_name :{model_name}")
-    from sqliteModels import insert_model_github
+    from sqliteModels import insert_model_github, init_db
     data = {
         "name" : model_name,
         "path" : f"models/tigerV2_{model_name}.pt",
@@ -113,9 +108,14 @@ if st.button("🚀 Start Training"):
         "epochs" : epochs,
         "lr" : learning_rate
         }
-    id = insert_model_github(data)
+    id = -1
+    try:
+        id = insert_model_github(data)
+    except:
+        init_db()
+        id = insert_model_github(data)
     push_db_to_github()
-    if id:
+    if id and id != -1:
         request_training(id)
     else:
         st.error("An error occurs !")
