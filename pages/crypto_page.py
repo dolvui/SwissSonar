@@ -22,7 +22,7 @@ def refresh_token():
 
 def tokens_heuristic(df_tokens):
     heuristics = []
-    if not df_tokens or not df_tokens.empty:
+    if df_tokens is None or df_tokens.empty:
         df_tokens = refresh_token()
     for token_id in df_tokens["id"]:
         data = get_latest_online_trends(token_id)
