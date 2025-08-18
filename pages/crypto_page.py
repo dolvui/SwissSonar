@@ -23,7 +23,7 @@ def refresh_token():
 def tokens_heuristic(df_tokens):
     heuristics = []
     if not df_tokens or not df_tokens.empty:
-        refresh_token()
+        df_tokens = refresh_token()
     for token_id in df_tokens["id"]:
         data = get_latest_online_trends(token_id)
 
@@ -59,7 +59,7 @@ df_tokens = None
 if "loaded" not in st.session_state:
     result = fetch_token_24h()
     if not result or len(result) == 0:
-        refresh_token()
+        df_tokens = refresh_token()
     for e in result:
         times.append(e["timestamp"])
         token = entity_to_token(e)
