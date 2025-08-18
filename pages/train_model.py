@@ -8,7 +8,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 from coingeckoAPI import fetch_token_price
-from github_pusher import delete_model_from_github, request_training
+from github_pusher import delete_model_from_github, request_training, push_db_to_github
 from scripts.model_trainner import benchmark_model
 
 # =========================
@@ -114,6 +114,7 @@ if st.button("🚀 Start Training"):
         "lr" : learning_rate
         }
     id = insert_model_github(data)
+    push_db_to_github()
     if id:
         request_training(id)
     else:

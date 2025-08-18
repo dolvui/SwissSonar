@@ -86,3 +86,35 @@ def request_training(id):
     subprocess.run(["git", "-C", str(local_repo), "add", "."], check=True)
     subprocess.run(["git", "-C", str(local_repo), "commit", "-m", f"Request training for model id : {id}"], check=True)
     subprocess.run(["git", "-C", str(local_repo), "push"], check=True)
+
+def push_db_to_github(db_path="models.db", commit_msg="Update models.db", token=None, repo=None):
+    if token is None:
+        token = st.secrets['github']['github_token']
+    if repo is None:
+        repo = st.secrets['github']['repo_name']
+
+    repo_url = f"https://{token}@github.com/{repo}.git"
+    local_repo = Path("/tmp/repo")
+
+    # Clean old clone
+    if local_repo.exists():
+        shutil.rmtree(local_repo)
+
+    # Clone fresh repo
+    subprocess.run(["git", "clone", repo_url, str(local_repo)], check=True)
+
+    # Copy the db file into the root of the repo
+    dest = local_repo / Path(db_path).name
+    subprocess.run(["cp", db_path, str(dest)], check=True)
+
+    # Git user setup
+    subprocess.run(["git", "-C", str(local_repo), "config", "user.email", "noa@ghidalia.fr"], check=True)
+    subprocess.run(["git", "-C", str(local_repo), "config", "user.name", "swissSonar"], check=True)
+
+    # Commit & push
+    subprocess.run(["git", "-C", str(local_repo), "pull"], check=True)
+    subprocess.run(["git", "-C", str(local_repo), "add", str(dest)], check=True)
+    subprocess.run(["git", "-C", str(local_repo), "commit", "-m", commit_msg], check=True)
+    subprocess.run(["git", "-C", str(local_repo), "push"], check=True)
+
+    st.success(f"✅ models.db pushed to GitHub repo {repo}")
