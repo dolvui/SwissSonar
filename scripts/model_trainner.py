@@ -42,7 +42,7 @@ def benchmark_model(model_path, crypto_id, days, window, steps_ahead,norms):
 
     mse = np.mean((pred_prices - actual_prices) ** 2)
     mae = np.mean(np.abs(pred_prices - actual_prices))
-
+    from matplotlib import pyplot as plt
     # Plot
     fig, ax = plt.subplots()
     ax.plot(range(len(actual_prices)), actual_prices, label="Actual", color="black")
