@@ -41,19 +41,40 @@ class TrendReq(PyTrendReq):
 
 
 secret = None
+reddit = None
+key = None
+
+
+
 
 try:
     with open("secret.json", 'r', encoding='utf-8') as json_file:
         secret = json.load(json_file)
 except:
-    secret = st.secrets
+    try:
+        secret = st.secrets
+    except:
+        pass
 
-reddit = praw.Reddit(
-    client_id=secret['client_id'],
-    client_secret=secret['client_secret'],
-    user_agent=secret['user_agent']
-)
-key = secret['google_key']
+if secret is not None:
+    reddit = praw.Reddit(
+        client_id=secret['client_id'],
+        client_secret=secret['client_secret'],
+        user_agent=secret['user_agent']
+    )
+    key = secret['google_key']
+else:
+    import os
+    reddit = praw.Reddit(
+        client_id= os.environ['CLIENT_ID'],
+        client_secret= os.environ['CLIENT_SECRET'],
+        user_agent=os.environ['USER_AGENT']
+    )
+    key = os.environ['GOOGLE_KEY']
+
+
+
+
 
 pytrends = TrendReq(hl='en-US', tz=360)
 

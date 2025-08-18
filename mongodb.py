@@ -7,8 +7,16 @@ import streamlit as st
 # db = client.crypto_db
 # tokens = db.tokens
 
-MONGO_URI = st.secrets["mongo"]["uri"]
-DB_NAME = st.secrets["mongo"]["db_name"]
+MONGO_URI = None
+DB_NAME = None
+
+try:
+    MONGO_URI = st.secrets["mongo"]["uri"]
+    DB_NAME = st.secrets["mongo"]["db_name"]
+except:
+    import os
+    MONGO_URI = os.environ["MONGO_URI"]
+    DB_NAME = os.environ["DB_NAME"]
 
 client = MongoClient(MONGO_URI)
 db = client[DB_NAME]

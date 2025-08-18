@@ -9,6 +9,13 @@ permissions:
 jobs:
   train:
     runs-on: ubuntu-latest
+    env:
+      MONGO_URI: ${{ secrets.MONGO_URI }}
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
+      USER_AGENT: ${{ secrets.USER_AGENT }}
     steps:
       - uses: actions/checkout@v3
         with:
