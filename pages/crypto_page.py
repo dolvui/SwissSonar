@@ -10,9 +10,20 @@ from onlineTrend import fetch_online_trend, compute_heuristics
 from analysis_preliminaire import analyse_token
 from pathlib import Path
 
+
+def refresh_token():
+    tokens, new_ids = swissUpdate.get_swissUpadte()
+    enriched_tokens = coingeckoAPI.fetch_market_data_fast(tokens, new_ids)
+    full_tokens = fetch_online_trend(enriched_tokens)
+    upsert_tokens_entry(full_tokens)
+    tokens_r = pd.DataFrame([t.dict_data() for t in full_tokens])
+    tokens_r = tokens_heuristic(tokens_r)
+    return tokens_r
+
 def tokens_heuristic(df_tokens):
     heuristics = []
-
+    if not df_tokens or not df_tokens.empty:
+        refresh_token()
     for token_id in df_tokens["id"]:
         data = get_latest_online_trends(token_id)
 
@@ -47,6 +58,8 @@ df_tokens = None
 
 if "loaded" not in st.session_state:
     result = fetch_token_24h()
+    if not result or len(result) == 0:
+        refresh_token()
     for e in result:
         times.append(e["timestamp"])
         token = entity_to_token(e)
