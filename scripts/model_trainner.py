@@ -194,6 +194,9 @@ def run_model_and_plot(model_path, data, window=15, steps_ahead=50):
 def launch_train_model(id,tikers):
     from sqliteModels import fetch_models_by_id
     model_dict = fetch_models_by_id(id)
+    if not model_dict or len(model_dict) == 0:
+        print(f"No models found with id {id}")
+        return -1
     model_dict = model_dict[0]
     name = model_dict["name"]
 
