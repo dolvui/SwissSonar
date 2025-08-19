@@ -67,8 +67,8 @@ def delete_model_from_github(model_name, commit_msg="Delete model"):
     subprocess.run(["git", "-C", str(local_repo), "commit", "-m", commit_msg], check=True)
     subprocess.run(["git", "-C", str(local_repo), "push"], check=True)
 
-#TODO change for id and use database
-def request_training(id):
+
+def request_training(id,training_crypto):
     repo_url = f"https://{st.secrets['github']['github_token']}@github.com/{st.secrets['github']['repo_name']}.git"
     local_repo = Path("/tmp/repo")
     if local_repo.exists():
@@ -78,7 +78,8 @@ def request_training(id):
     jobs_dir = local_repo / "jobs"
     jobs_dir.mkdir(exist_ok=True)
     job_file = jobs_dir / f"train_{id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-    job_file.write_text(f"{id}")
+    job_file.write_text(f"{id}\n{training_crypto.join(":")}")
+
 
     subprocess.run(["git", "config", "--global", "user.email", "noa@ghidalia.fr"], check=True)
     subprocess.run(["git", "config", "--global", "user.name", "swissSonar"], check=True)

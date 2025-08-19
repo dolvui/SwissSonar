@@ -1,8 +1,5 @@
 name: Daily Refresh
 on:
-  push:
-    branches:
-      - main
   schedule:
     - cron: '0 6 * * *'
 permissions:

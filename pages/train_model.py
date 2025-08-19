@@ -41,11 +41,14 @@ model_files = sorted([f for f in MODELS_DIR.iterdir() if f.is_file() and f.name.
 
 st.subheader("List of available models:")
 
-cryptos_available = {
-    "BNB": "binance-coin-wormhole",
-    "BTC": "osmosis-allbtc",
-    "SOL": "wrapped-solana"
-}
+from mongodb import fetch_token_24h
+from CryptoToken import entity_to_token
+
+cryptos_available = {}
+result = fetch_token_24h()
+for e in result:
+    token = entity_to_token(e)
+    cryptos_available[e['ticker']] = e['gecko_id']
 
 if not model_files:
     st.info("No models found in the `models/` directory.")
@@ -116,6 +119,7 @@ if st.button("🚀 Start Training"):
         id = insert_model_github(data)
     push_db_to_github("/tmp/models.db")
     if id and id != -1:
-        request_training(id)
+        print(selected_cryptos)
+        request_training(id,selected_cryptos)
     else:
         st.error("An error occurs !")
