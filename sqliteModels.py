@@ -63,3 +63,6 @@ def fetch_models_by_id(id):
     cursor.execute(""" SELECT * FROM models WHERE id = ?""", (id,))
     rows = cursor.fetchall()
     return [dict(row) for row in rows]
+
+def update_model_benchmark(id,mse,mae):
+    cursor.execute("""UPDATE models SET mse = ? , mle = ? WHERE id = ?""", (mse, mae, id))

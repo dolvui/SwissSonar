@@ -1,11 +1,10 @@
-import sys
-import datetime
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from coingeckoAPI import fetch_token_price
-from github_pusher import push_model_to_github
+from sqliteModels import fetch_models_by_name
+from pathlib import Path
 
 class PriceLSTM(nn.Module):
     def __init__(self, input_size=1, hidden_size=32, output_steps=5, dropout=0.2):
@@ -30,11 +29,11 @@ def benchmark_model(model_path, crypto_id, days, window, steps_ahead,norms):
 
     # Last window for prediction
     last_window = torch.tensor(prices_norm[-window:], dtype=torch.float32).unsqueeze(0).unsqueeze(2)
-    from sqliteModels import fetch_models_by_name
-    from pathlib import Path
     models = fetch_models_by_name(Path(model_path).name.replace(".pt", "").replace("tigerV2_", ""))
-    print(models)
-    model = PriceLSTM(input_size=1, hidden_size=32, output_steps=steps_ahead)
+    if not models or len(models) == 0:
+        print("No models found")
+
+    model = PriceLSTM(input_size=1, hidden_size=models[0]['hidden'], output_steps=models[0]['steps'])
     model.load_state_dict(torch.load(model_path))
     model.eval()
     with torch.no_grad():
@@ -53,7 +52,10 @@ def benchmark_model(model_path, crypto_id, days, window, steps_ahead,norms):
     ax.plot(range(len(pred_prices)), pred_prices, label="Predicted", color="red")
     ax.legend()
     ax.set_title(f"Benchmark for {crypto_id} - MSE: {mse:.4f}, MAE: {mae:.4f}")
-
+    from sqliteModels import update_model_benchmark
+    from github_pusher import push_db_to_github
+    update_model_benchmark(models[0]['hidden'], mse, mae)
+    push_db_to_github("/tmp/models.db")
     return fig, mse, mae
 
 def build_sequences(data, window, steps_ahead):
@@ -126,8 +128,10 @@ def run_model_and_plot(model_path, data, window=15, steps_ahead=50):
     """
     Load a trained model, run predictions on new data, and generate a plot.
     """
-    #TODO call to databse to retrieve the right param
-    model = PriceLSTM(input_size=1, hidden_size=32, output_steps=steps_ahead)
+    models = fetch_models_by_name(Path(model_path).name.replace(".pt", "").replace("tigerV2_", ""))
+    if not models or len(models) == 0:
+        print("No models found")
+    model = PriceLSTM(input_size=1, hidden_size=models[0]['hidden'], output_steps=models[0]['steps'])
     model.load_state_dict(torch.load(model_path))
     model.eval()
 
@@ -179,5 +183,3 @@ def launch_train_model(id):
     norms_path = f"models/tigerV2_{name}_norms.npy"
     torch.save(model.state_dict(), model_path)
     np.save(norms_path, norms)
-    #files = [model_path, norms_path]
-    #push_model_to_github(files, commit_msg=f"Add model {model_dict["name"]}-{id}-{datetime.datetime.now()}")
