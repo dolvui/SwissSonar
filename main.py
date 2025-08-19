@@ -6,6 +6,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='select which action need to make')
     parser.add_argument('--refresh-coins', metavar='boolean', required=False)
     parser.add_argument('--train', metavar='int', required=False)
+    parser.add_argument('--tickers', metavar='string', required=False)
 
     args = parser.parse_args()
     from sqliteModels import init_db
@@ -15,7 +16,7 @@ if __name__ == '__main__':
         refresh_coins()
     if args.train:
         from scripts.model_trainner import launch_train_model
-        launch_train_model(int(args.train))
+        launch_train_model(int(args.train),args.tickers)
     if not args.train and not args.refresh_coins:
         pages = {
             "Home": [

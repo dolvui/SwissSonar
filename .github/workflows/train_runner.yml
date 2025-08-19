@@ -28,8 +28,9 @@ jobs:
       - name: Run training
         run: |
           for file in jobs/*.txt; do
-            model_id=$(cut -d',' -f1 $file)
-            python main.py --train $model_id
+            model_id=$(sed -n '1p' $file)
+            tickers=$(sed -n '2p' $file)
+            python main.py --train $model_id --data $tickers 
             rm "$file"
           done
       - name: Commit results

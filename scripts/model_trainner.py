@@ -90,7 +90,7 @@ def build_multi_crypto_dataset(fetch_fn, cryptos, days, window, steps_ahead):
     Y_total = np.concatenate(Y_all)
     return X_total, Y_total, norms
 
-selected_cryptos = {"BTC": "osmosis-allbtc"}
+selected_cryptos = {}
 
 def train_model(name,days, window, steps_ahead, epochs, learning_rate, hidden_size):
     X, Y, norms = build_multi_crypto_dataset(fetch_token_price,selected_cryptos, days, window, steps_ahead)
@@ -173,11 +173,20 @@ def run_model_and_plot(model_path, data, window=15, steps_ahead=50):
     return buf
 
 
-def launch_train_model(id):
+def launch_train_model(id,tikers):
     from sqliteModels import fetch_models_by_id
     model_dict = fetch_models_by_id(id)
     model_dict = model_dict[0]
     name = model_dict["name"]
+
+    from mongodb import fetch_token_24h
+
+    result = fetch_token_24h()
+    selected = tikers.split(':')
+    for e in result:
+        if e['ticker'] in selected:
+            selected_cryptos[e['ticker']] = e['gecko_id']
+
     model, losses, test_loss, norms = train_model(name,model_dict["days"], model_dict["windows"], model_dict["steps"], model_dict["epochs"], model_dict["lr"], model_dict["hidden"])
     model_path = f"models/tigerV2_{name}.pt"
     norms_path = f"models/tigerV2_{name}_norms.npy"
