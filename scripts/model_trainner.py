@@ -5,6 +5,7 @@ import torch.optim as optim
 from coingeckoAPI import fetch_token_price
 from sqliteModels import fetch_models_by_name
 from pathlib import Path
+import time
 
 class PriceLSTM(nn.Module):
     def __init__(self, input_size=1, hidden_size=32, output_steps=5, dropout=0.2):
@@ -65,29 +66,46 @@ def build_sequences(data, window, steps_ahead):
         Y.append(data[i + window:i + window + steps_ahead])
     return np.array(X, dtype=np.float32), np.array(Y, dtype=np.float32)
 
-def build_multi_crypto_dataset(fetch_fn, cryptos, days, window, steps_ahead):
+def build_multi_crypto_dataset(fetch_fn, cryptos, days, window, steps_ahead, max_retries=5):
     X_all, Y_all = [], []
     norms = {}
 
-    for name, gecko_id in cryptos.items():
-        data = []
+    crypto_items = list(cryptos.items())
+    i = 0
+    retries = 0
+
+    while i < len(crypto_items):
+        name, gecko_id = crypto_items[i]
         try:
             data = fetch_fn(gecko_id, days=days)
-            data['prices']
+            if "prices" not in data:
+                raise ValueError(f"No prices found for {gecko_id}")
+
+            prices = np.array([float(e[1]) for e in data["prices"]], dtype=np.float32)
+            mean, std = prices.mean(), prices.std()
+            norms[name] = (mean, std)
+
+            prices_norm = (prices - mean) / std
+            X, Y = build_sequences(prices_norm, window, steps_ahead)
+            X_all.append(X)
+            Y_all.append(Y)
+
+            i += 1
+            retries = 0
+
         except Exception as e:
-            print(e)
-            print(data)
-        prices = np.array([float(e[1]) for e in data['prices']], dtype=np.float32)
-        mean, std = prices.mean(), prices.std()
-        norms[name] = (mean, std)
+            print(f"Error fetching {gecko_id}: {e}")
+            retries += 1
+            if retries > max_retries:
+                print(f"Skipping {gecko_id} after {max_retries} retries")
+                i += 1
+                retries = 0
+            else:
+                print("Rate limited or error, waiting 60s before retry...")
+                time.sleep(60)
 
-        prices_norm = (prices - mean) / std
-        X, Y = build_sequences(prices_norm, window, steps_ahead)
-        X_all.append(X)
-        Y_all.append(Y)
-
-    X_total = np.vstack(X_all)
-    Y_total = np.concatenate(Y_all)
+    X_total = np.vstack(X_all) if X_all else np.empty((0,))
+    Y_total = np.concatenate(Y_all) if Y_all else np.empty((0,))
     return X_total, Y_total, norms
 
 selected_cryptos = {}
