@@ -90,7 +90,7 @@ def request_training(id,training_crypto):
     subprocess.run(["git", "-C", str(local_repo), "commit", "-m", f"Request training for model id : {id}"], check=True)
     subprocess.run(["git", "-C", str(local_repo), "push"], check=True)
 
-def push_db_to_github(db_path="models.db", commit_msg="Update models.db", token=None, repo=None):
+def push_db_to_github(db_path="/tmp/models.db", commit_msg="Update models.db", token=None, repo=None):
     if token is None:
         token = st.secrets['github']['github_token']
     if repo is None:
@@ -118,7 +118,6 @@ def push_db_to_github(db_path="models.db", commit_msg="Update models.db", token=
 
     # Commit & push
     try:
-        subprocess.run(["git", "-C", str(local_repo), "pull"], check=True)
         subprocess.run(["git", "-C", str(local_repo), "add", str(dest)], check=True)
         subprocess.run(["git", "-C", str(local_repo), "commit", "-m", commit_msg], check=True)
         subprocess.run(["git", "-C", str(local_repo), "push"], check=True)

@@ -100,7 +100,7 @@ pred_chart_placeholder = col2.empty()
 if st.button("🚀 Start Training"):
     st.write(f"model is gone for training come back later \n")
     st.write(f"Params are days : {days},window :{window},steps_ahead :{steps_ahead},epochs :{epochs},learning_rate :{learning_rate},hidden_size :{hidden_size},model_name :{model_name}")
-    from sqliteModels import insert_model_github, init_db
+    from sqliteModels import insert_model_github, init_db,fetch_models_by_id
     data = {
         "name" : model_name,
         "path" : f"models/tigerV2_{model_name}.pt",
@@ -117,6 +117,7 @@ if st.button("🚀 Start Training"):
     except:
         init_db()
         id = insert_model_github(data)
+    print(fetch_models_by_id(id))
     push_db_to_github("/tmp/models.db")
     if id and id != -1:
         request_training(id,selected_cryptos)
