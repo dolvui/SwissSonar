@@ -75,7 +75,8 @@ else:
         with col3:
             if st.button("🗑 Delete", key=f"del_{model_path}"):
                 delete_model_from_github(model_path.name)
-                #TODO remove from db and push it
+                from sqliteModels import remove_model_by_path
+                remove_model_by_path(model_path)
                 st.warning(f"Deleted `{model_path.name}`")
                 st.rerun()
 
@@ -83,7 +84,7 @@ else:
 selected_cryptos = st.sidebar.multiselect(
     "Select Cryptos",
     options=list(cryptos_available.keys()),
-    default=list(cryptos_available.keys())
+    default=list({"BTC" : "osmosis-allbtc"}.keys()),
 )
 
 # =========================

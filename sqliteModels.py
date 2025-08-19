@@ -68,3 +68,8 @@ def fetch_models_by_id(id):
 
 def update_model_benchmark(id,mse,mae):
     cursor.execute("""UPDATE models SET mse = ? , mle = ? WHERE id = ?""", (mse, mae, id))
+    conn.commit()
+
+def remove_model_by_path(path):
+    cursor.execute("""DELETE FROM models WHERE path = ?""",(path,))
+    conn.commit()

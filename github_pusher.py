@@ -50,10 +50,12 @@ def delete_model_from_github(model_name, commit_msg="Delete model"):
     # Path to models dir in repo
     models_dir = local_repo / "models"
     model_path = models_dir / model_name
+    bench_path = models_dir / model_name.replace(".pt", "_norms.npy")
 
     # Check if model exists
     if model_path.exists():
         os.remove(model_path)
+        os.remove(bench_path)
         print(f"Deleted {model_name} from repo")
     else:
         raise FileNotFoundError(f"Model '{model_name}' not found in repository models directory.")
