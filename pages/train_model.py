@@ -75,6 +75,7 @@ else:
         with col3:
             if st.button("🗑 Delete", key=f"del_{model_path}"):
                 delete_model_from_github(model_path.name)
+                #TODO remove from db and push it
                 st.warning(f"Deleted `{model_path.name}`")
                 st.rerun()
 
