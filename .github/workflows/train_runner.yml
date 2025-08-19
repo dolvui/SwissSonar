@@ -30,7 +30,7 @@ jobs:
           for file in jobs/*.txt; do
             model_id=$(sed -n '1p' $file)
             tickers=$(sed -n '2p' $file)
-            python main.py --train $model_id --data "$tickers" 
+            python main.py --train $model_id --tickers "$tickers" 
             rm "$file"
           done
       - name: Commit results
