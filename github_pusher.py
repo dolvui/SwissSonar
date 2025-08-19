@@ -78,7 +78,7 @@ def request_training(id,training_crypto):
     jobs_dir = local_repo / "jobs"
     jobs_dir.mkdir(exist_ok=True)
     job_file = jobs_dir / f"train_{id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-    job_file.write_text(f"{id}\n{training_crypto.join(":")}")
+    job_file.write_text(f"{id}\n{":".join(training_crypto)}")
 
 
     subprocess.run(["git", "config", "--global", "user.email", "noa@ghidalia.fr"], check=True)
