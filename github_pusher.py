@@ -115,9 +115,12 @@ def push_db_to_github(db_path="models.db", commit_msg="Update models.db", token=
     subprocess.run(["git", "-C", str(local_repo), "config", "user.name", "swissSonar"], check=True)
 
     # Commit & push
-    subprocess.run(["git", "-C", str(local_repo), "pull"], check=True)
-    subprocess.run(["git", "-C", str(local_repo), "add", str(dest)], check=True)
-    subprocess.run(["git", "-C", str(local_repo), "commit", "-m", commit_msg], check=True)
-    subprocess.run(["git", "-C", str(local_repo), "push"], check=True)
+    try:
+        subprocess.run(["git", "-C", str(local_repo), "pull"], check=True)
+        subprocess.run(["git", "-C", str(local_repo), "add", str(dest)], check=True)
+        subprocess.run(["git", "-C", str(local_repo), "commit", "-m", commit_msg], check=True)
+        subprocess.run(["git", "-C", str(local_repo), "push"], check=True)
 
-    st.success(f"✅ models.db pushed to GitHub repo {repo}")
+        st.success(f"✅ models.db pushed to GitHub repo {repo}")
+    except:
+        st.warning("models.db not pushed !")
