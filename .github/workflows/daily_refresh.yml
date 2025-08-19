@@ -27,10 +27,3 @@ jobs:
           DB_NAME: ${{ secrets.DB_NAME }}
           GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
           USER_AGENT: ${{ secrets.USER_AGENT }}
-      - name: Commit refresh results
-        run: |
-          git config --global user.email "noa@ghidalia.fr"
-          git config --global user.name "swissSonar"
-          git add .
-          git commit -m "Daily refresh data"
-          git push
