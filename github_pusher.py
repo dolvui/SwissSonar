@@ -91,6 +91,10 @@ def request_training(id,training_crypto):
     subprocess.run(["git", "-C", str(local_repo), "push"], check=True)
 
 def push_db_to_github(db_path="/tmp/models.db", commit_msg="Update models.db", token=None, repo=None):
+    import hashlib, os, subprocess, shutil
+    from pathlib import Path
+    import streamlit as st
+
     if token is None:
         token = st.secrets['github']['github_token']
     if repo is None:
@@ -98,30 +102,26 @@ def push_db_to_github(db_path="/tmp/models.db", commit_msg="Update models.db", t
 
     repo_url = f"https://{token}@github.com/{repo}.git"
     local_repo = Path("/tmp/repo")
-    import time
-    os.utime(db_path, (time.time(), time.time()))
 
     # Clean old clone
     if local_repo.exists():
         shutil.rmtree(local_repo)
 
-    # Clone fresh repo
     subprocess.run(["git", "clone", repo_url, str(local_repo)], check=True)
 
-    # Copy the db file into the root of the repo
     dest = local_repo / Path(db_path).name
-    subprocess.run(["cp", db_path, str(dest)], check=True)
+    shutil.copy2(db_path, dest)
 
-    # Git user setup
     subprocess.run(["git", "-C", str(local_repo), "config", "user.email", "noa@ghidalia.fr"], check=True)
     subprocess.run(["git", "-C", str(local_repo), "config", "user.name", "swissSonar"], check=True)
 
-    # Commit & push
-    try:
-        subprocess.run(["git", "-C", str(local_repo), "add", str(dest)], check=True)
+    # Stage and commit
+    subprocess.run(["git", "-C", str(local_repo), "add", "-f", str(dest)], check=True)
+    result = subprocess.run(["git", "-C", str(local_repo), "status", "--porcelain"], capture_output=True, text=True)
+
+    if result.stdout.strip():
         subprocess.run(["git", "-C", str(local_repo), "commit", "-m", commit_msg], check=True)
         subprocess.run(["git", "-C", str(local_repo), "push"], check=True)
-
-        st.success(f"✅ models.db pushed to GitHub repo {repo}")
-    except:
-        st.warning("models.db not pushed !")
+        st.success("✅ models.db updated and pushed")
+    else:
+        st.info("ℹ️ models.db already up-to-date, no commit made")

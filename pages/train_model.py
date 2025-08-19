@@ -117,7 +117,6 @@ if st.button("🚀 Start Training"):
     except:
         init_db()
         id = insert_model_github(data)
-    print(fetch_models_by_id(id))
     push_db_to_github("/tmp/models.db")
     if id and id != -1:
         request_training(id,selected_cryptos)
