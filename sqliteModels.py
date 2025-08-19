@@ -1,7 +1,6 @@
 import sqlite3
 import shutil
 from pathlib import Path
-from datetime import datetime , timedelta
 
 DB_PATH = Path("/tmp/models.db")
 

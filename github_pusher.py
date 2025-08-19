@@ -98,6 +98,8 @@ def push_db_to_github(db_path="models.db", commit_msg="Update models.db", token=
 
     repo_url = f"https://{token}@github.com/{repo}.git"
     local_repo = Path("/tmp/repo")
+    import time
+    os.utime(db_path, (time.time(), time.time()))
 
     # Clean old clone
     if local_repo.exists():
