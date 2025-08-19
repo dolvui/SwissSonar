@@ -56,7 +56,7 @@ except:
     except:
         pass
 
-if secret is None:
+if secret:
     reddit = praw.Reddit(
         client_id=secret['client_id'],
         client_secret=secret['client_secret'],
