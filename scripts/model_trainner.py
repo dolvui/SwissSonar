@@ -30,7 +30,11 @@ def benchmark_model(model_path, crypto_id, days, window, steps_ahead,norms):
 
     # Last window for prediction
     last_window = torch.tensor(prices_norm[-window:], dtype=torch.float32).unsqueeze(0).unsqueeze(2)
-    model = PriceLSTM(input_size=1, hidden_size=200, output_steps=steps_ahead)
+    from sqliteModels import fetch_models_by_name
+    from pathlib import Path
+    models = fetch_models_by_name(Path(model_path).name.replace(".pt", "").replace("tigerV2_", ""))
+    print(models)
+    model = PriceLSTM(input_size=1, hidden_size=32, output_steps=steps_ahead)
     model.load_state_dict(torch.load(model_path))
     model.eval()
     with torch.no_grad():

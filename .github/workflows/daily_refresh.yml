@@ -1,19 +1,29 @@
 name: Daily Refresh
 on:
   schedule:
-    - cron: '0 6 * * *'
-
+    - cron: '0 10 * * *'
+permissions:
+  contents: write
 jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       - run: pip install -r requirements.txt
       - run: python main.py --refresh-coins="True"
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
+          USER_AGENT: ${{ secrets.USER_AGENT }}
       - name: Commit refresh results
         run: |
           git config --global user.email "noa@ghidalia.fr"
