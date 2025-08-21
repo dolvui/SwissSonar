@@ -45,7 +45,7 @@ def fetch_models():
 
 def fetch_models_by_name(name: str):
     """Fetch models filtered by name."""
-    return list(models.find({"name": name}, {"_id": 0}))
+    return list(models.find({"name": name})) #, {"_id": 0}))
 
 
 def fetch_models_by_id(id: str):
