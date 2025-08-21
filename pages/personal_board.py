@@ -39,7 +39,7 @@ else:
             current_price = 0.0
 
             if rubrick["provider"] == "crypto":
-                pass#current_price = get_price(rubrick.get('provider', '?'),cryptos_available[item["symbol"]])
+                current_price = get_price(rubrick.get('provider', '?'),cryptos_available[item["symbol"]])
             if rubrick["provider"] == "stock":
                 pass
             if rubrick["provider"] == "forex":
