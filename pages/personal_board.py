@@ -2,13 +2,12 @@ import streamlit as st
 from board import get_board, add_rubrick, delete_rubrick, add_item, delete_item
 from prices import get_price
 from mongodb import fetch_token_24h
+from pytickersymbols import PyTickerSymbols
+stock_data = PyTickerSymbols()
 
-cryptos_available = {}
-result = fetch_token_24h()
-for e in result:
-    cryptos_available[e['ticker']] = e['gecko_id']
-
-
+cryptos_available = {e['ticker']: e['gecko_id'] for e in fetch_token_24h()}
+stock_symbols = PyTickerSymbols().get_all_stocks() #get_stock_by_google_symbol(None)#
+forex_available = ["USD", "EUR", "GBP", "JPY"]
 
 st.set_page_config(page_title="Personal Board", layout="wide", page_icon="👁️")
 
@@ -41,9 +40,9 @@ else:
             if rubrick["provider"] == "crypto":
                 current_price = get_price(rubrick.get('provider', '?'),cryptos_available[item["symbol"]])
             if rubrick["provider"] == "stock":
-                pass
+                current_price = get_price(rubrick.get('provider', '?'),item["symbol"])
             if rubrick["provider"] == "forex":
-                pass
+                current_price = get_price(rubrick.get('provider', '?'), item["symbol"])
             delta = (current_price - item["buy_price"]) / item["buy_price"] * 100 if item["buy_price"] > 0 else 0
             pnl_value = (current_price - item["buy_price"]) * item["quantity"]
             rubrick_pnl += pnl_value
@@ -100,9 +99,9 @@ else:
                 if rubrick["provider"] == "crypto":
                     symbol = st.selectbox("Select crypto available", options=cryptos_available.keys(),key=f"sym_{rubrick['name']}")
                 if rubrick["provider"] == "stock":
-                    symbol = st.selectbox("Select stock available", options=cryptos_available.keys(),key=f"sym_{rubrick['name']}")
+                    symbol = st.selectbox("Select stock available", options=stock_symbols,key=f"sym_{rubrick['name']}")
                 if rubrick["provider"] == "forex":
-                    symbol = st.selectbox("Select forex available", options=cryptos_available.keys(),key=f"sym_{rubrick['name']}")
+                    symbol = st.selectbox("Select forex available", options=forex_available,key=f"sym_{rubrick['name']}")
             with col2:
                 buy_price = st.number_input("Buy Price", min_value=0.0, key=f"price_{rubrick['name']}")
             with col3:
