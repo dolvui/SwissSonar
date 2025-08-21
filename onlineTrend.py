@@ -43,9 +43,7 @@ class TrendReq(PyTrendReq):
 secret = None
 reddit = None
 key = None
-
-
-
+is_running_on_github = False
 
 try:
     with open("secret.json", 'r', encoding='utf-8') as json_file:
@@ -54,23 +52,24 @@ except:
     try:
         secret = st.secrets
     except:
-        pass
+        is_running_on_github = True
 
-if secret:
+if is_running_on_github:
+    import os
+
+    reddit = praw.Reddit(
+        client_id=os.environ['CLIENT_ID'],
+        client_secret=os.environ['CLIENT_SECRET'],
+        user_agent=os.environ['USER_AGENT']
+    )
+    key = os.environ['GOOGLE_KEY']
+else:
     reddit = praw.Reddit(
         client_id=secret['client_id'],
         client_secret=secret['client_secret'],
         user_agent=secret['user_agent']
     )
     key = secret['google_key']
-else:
-    import os
-    reddit = praw.Reddit(
-        client_id= os.environ['CLIENT_ID'],
-        client_secret= os.environ['CLIENT_SECRET'],
-        user_agent=os.environ['USER_AGENT']
-    )
-    key = os.environ['GOOGLE_KEY']
 
 
 
