@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import streamlit as st
 
-from github_pusher import delete_model_from_github, request_training, push_db_to_github
+from github_pusher import delete_model_from_github, request_training
 from scripts.model_trainner import benchmark_model
 
 # =========================
