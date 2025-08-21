@@ -40,7 +40,3 @@ def page():
 if user:
     st.write(f"Welcome {user} !")
     page()
-else:
-    st.session_state['user'] = st.text_input("Username")
-    user = st.session_state['user']
-    board = get_board(user)
