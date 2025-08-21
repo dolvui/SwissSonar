@@ -1,8 +1,14 @@
 from board import get_board, add_rubrick, delete_rubrick, add_item, delete_item
 import streamlit as st
 
-user = st.session_state['user']
-board = get_board(user)
+try:
+    user = st.session_state['user']
+    board = get_board(user)
+except Exception as e:
+    st.session_state['user'] = st.text_input("Username")
+    user = st.session_state['user']
+    board = get_board(user)
+
 
 st.subheader("📊 Your Rubricks")
 
