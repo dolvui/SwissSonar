@@ -1,8 +1,8 @@
 from board import get_board, add_rubrick, delete_rubrick, add_item, delete_item
 import streamlit as st
 
-user = None
-board = None
+user = st.session_state['user']
+board = get_board(user)
 
 st.subheader("📊 Your Rubricks")
 
@@ -31,7 +31,7 @@ def page():
         st.experimental_rerun()
 
 
-if st.session_state['user']:
+if user:
     st.write(f"Welcome {user} !")
     page()
 else:
