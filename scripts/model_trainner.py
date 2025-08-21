@@ -54,9 +54,9 @@ def benchmark_model(model_path, crypto_id, days, window, steps_ahead,norms):
     ax.legend()
     ax.set_title(f"Benchmark for {crypto_id} - MSE: {mse:.4f}, MAE: {mae:.4f}")
     from sqliteModels import update_model_benchmark
-    from github_pusher import push_db_to_github
+    #from github_pusher import push_db_to_github
     update_model_benchmark(models[0]['hidden'], mse, mae)
-    push_db_to_github("/tmp/models.db")
+    #push_db_to_github("/tmp/models.db")
     return fig, mse, mae
 
 def build_sequences(data, window, steps_ahead):

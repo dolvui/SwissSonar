@@ -1,103 +1,69 @@
-import sqlite3
-import shutil
-from pathlib import Path
+from pymongo import MongoClient
+from datetime import datetime
+import streamlit as st
+import os
 
-DB_PATH = Path("/tmp/models.db")
+# Load secrets
+try:
+    MONGO_URI = st.secrets["mongo"]["uri"]
+    DB_NAME = st.secrets["mongo"]["db_name"]
+except Exception:
+    MONGO_URI = os.environ.get("MONGO_URI")
+    DB_NAME = os.environ.get("DB_NAME")
 
-# Copy db from repo if not already in /tmp
-if not DB_PATH.exists():
-    repo_db = Path("models.db")
-    if repo_db.exists():
-        shutil.copy(repo_db, DB_PATH)
-
-# One global connection (thread-safe mode ON)
-conn = sqlite3.connect(DB_PATH, check_same_thread=False)
-conn.row_factory = sqlite3.Row
-conn.execute("PRAGMA journal_mode=WAL;")
-conn.execute("PRAGMA synchronous=NORMAL;")
+# Init client
+client = MongoClient(MONGO_URI)
+db = client[DB_NAME]
+models = db.models   # new collection
 
 
 def init_db():
-    cur = conn.cursor()
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS models (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        path TEXT,
-        days INTEGER,
-        windows INTEGER,
-        steps INTEGER,
-        epochs INTEGER,
-        lr REAL,
-        hidden INTEGER,
-        mse REAL,
-        mle REAL,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-    """)
-    conn.commit()
-    cur.close()
+    """Ensure indexes exist for models collection."""
+    models.create_index("name", unique=True)
 
 
 def insert_models(data: dict):
-    cur = conn.cursor()
-    cur.execute("""
-    INSERT INTO models (name,path,days,windows,steps,epochs,lr,hidden,mse,mle,timestamp)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (data["name"], data["path"], data["days"], data["windows"], data["steps"],
-          data["epochs"], data["lr"], data["hidden"], data["mse"], data["mle"], data["timestamp"]))
-    conn.commit()
-    cur.close()
+    """Insert full model entry with metrics + timestamp."""
+    data["timestamp"] = data.get("timestamp", datetime.utcnow())
+    models.insert_one(data)
 
 
 def insert_model_github(data: dict):
-    cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO models (name, path, days, windows, steps, epochs, lr, hidden)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """, (data["name"], data["path"], data["days"], data["windows"], data["steps"],
-          data["epochs"], data["lr"], data["hidden"]))
-    conn.commit()
-
-    cur.execute("SELECT id FROM models WHERE name = ?", (data["name"],))
-    row = cur.fetchone()
-    cur.close()
-    return row[0] if row else None
+    """
+    Insert a new model when triggered from Streamlit training.
+    Returns the inserted model's ID.
+    """
+    data["timestamp"] = datetime.utcnow()
+    result = models.insert_one(data)
+    return str(result.inserted_id)
 
 
 def fetch_models():
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM models")
-    rows = cur.fetchall()
-    cur.close()
-    return [dict(row) for row in rows]
+    """Fetch all models."""
+    return list(models.find({}, {"_id": 0}))
 
 
 def fetch_models_by_name(name: str):
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM models WHERE name = ?", (name,))
-    rows = cur.fetchall()
-    cur.close()
-    return [dict(row) for row in rows]
+    """Fetch models filtered by name."""
+    return list(models.find({"name": name}, {"_id": 0}))
 
 
-def fetch_models_by_id(id: int):
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM models WHERE id = ?", (id,))
-    rows = cur.fetchall()
-    cur.close()
-    return [dict(row) for row in rows]
+def fetch_models_by_id(id: str):
+    """Fetch model by its MongoDB _id (string)."""
+    from bson import ObjectId
+    doc = models.find_one({"_id": ObjectId(id)}, {"_id": 0})
+    return [doc] if doc else []
 
 
-def update_model_benchmark(id: int, mse: float, mae: float):
-    cur = conn.cursor()
-    cur.execute("UPDATE models SET mse = ?, mle = ? WHERE id = ?", (mse, mae, id))
-    conn.commit()
-    cur.close()
+def update_model_benchmark(id: str, mse: float, mae: float):
+    """Update benchmark metrics of a model."""
+    from bson import ObjectId
+    models.update_one(
+        {"_id": ObjectId(id)},
+        {"$set": {"mse": mse, "mle": mae}}
+    )
 
 
 def remove_model_by_path(path: str):
-    cur = conn.cursor()
-    cur.execute("DELETE FROM models WHERE path = ?", (path,))
-    conn.commit()
-    cur.close()
+    """Remove a model entry by its path."""
+    models.delete_one({"path": path})

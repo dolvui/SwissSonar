@@ -22,6 +22,8 @@ client = MongoClient(MONGO_URI)
 db = client[DB_NAME]
 tokens = db.tokens
 
+#--------------------------------------------------- table for token ---------------------------------------------------
+
 def upsert_tokens_entry(data):
     for token in data:
         upsert_token_entry(token.dict_data())
@@ -143,3 +145,5 @@ def get_latest_online_trends(gecko_id, count=2):
 
     sorted_signals = sorted(doc["online_signals"], key=lambda x: x["timestamp"], reverse=True)
     return sorted_signals[:count]
+
+#-----------------------------------------------------------------------------------------------------------------------
