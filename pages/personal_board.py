@@ -14,11 +14,15 @@ if st.session_state["board_name"] is None:
         st.rerun()
 else:
     board_name = st.session_state["board_name"]
-    st.title(f"📊 Board: {board_name}")
+    #st.title(f"📊 Board: {board_name}")
 
     board = get_board(board_name)
     total_board_pnl = 0.0
-
+    color = "green" if total_board_pnl >= 0 else "red"
+    st.markdown(
+        f"<h1>📊 Board: {board_name} <span style='float:right; color:{color};'>{total_board_pnl:+.2f}</span></h1>",
+        unsafe_allow_html=True
+    )
     for rubrick in board["rubricks"]:
         rubrick_pnl = 0.0
         with st.expander(f"📂 {rubrick['name']} ({rubrick.get('provider','?')})"):
