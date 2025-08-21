@@ -1,6 +1,9 @@
 from board import get_board, add_rubrick, delete_rubrick, add_item, delete_item
 import streamlit as st
 
+user = None
+board = None
+
 try:
     user = st.session_state['user']
     board = get_board(user)
