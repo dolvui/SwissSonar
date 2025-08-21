@@ -1,6 +1,14 @@
 import streamlit as st
 from board import get_board, add_rubrick, delete_rubrick, add_item, delete_item
 from prices import get_price
+from mongodb import fetch_token_24h
+
+cryptos_available = {}
+result = fetch_token_24h()
+for e in result:
+    cryptos_available[e['ticker']] = e['gecko_id']
+
+
 
 st.set_page_config(page_title="Personal Board", layout="wide", page_icon="👁️")
 
@@ -56,11 +64,6 @@ else:
         rubrick_color = "green" if rubrick_pnl >= 0 else "red"
 
         with st.expander(f"📂 {rubrick['name']} ({rubrick.get('provider', '?')} )       :{rubrick_color}[{rubrick_pnl:+.2f}]", expanded=False):
-            # st.markdown(
-            #     f"<h3>{rubrick['name']} <span style='float:right; color:{rubrick_color};'>{rubrick_pnl:+.2f}</span></h3>",
-            #     unsafe_allow_html=True
-            # )
-
             # Header row
             col1, col2, col3, col4, col5 = st.columns([2, 2, 2, 2, 1])
             col1.write("**Symbol**")
@@ -87,7 +90,12 @@ else:
             st.write("➕ Add Investment")
             col1, col2, col3 = st.columns(3)
             with col1:
-                symbol = st.text_input(f"Symbol ({rubrick['name']})", key=f"sym_{rubrick['name']}")
+                if rubrick["provider"] == "crypto":
+                    symbol = st.selectbox("Select crypto available", options=cryptos_available.keys(),key=f"sym_{rubrick['name']}")
+                if rubrick["provider"] == "stock":
+                    symbol = st.selectbox("Select stock available", options=cryptos_available.keys(),key=f"sym_{rubrick['name']}")
+                if rubrick["provider"] == "stock":
+                    symbol = st.selectbox("Select forex available", options=cryptos_available.keys(),key=f"sym_{rubrick['name']}")
             with col2:
                 buy_price = st.number_input("Buy Price", min_value=0.0, key=f"price_{rubrick['name']}")
             with col3:
