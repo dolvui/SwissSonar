@@ -6,5 +6,6 @@ st.title("Personal Board page")
 # name = st.session_state['user']
 #
 # print(st.session_state['user'])
-print(st.session_state)
+if st.button("Predict"):
+    print(st.session_state)
 #st.write(f"{name}")
