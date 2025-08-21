@@ -108,7 +108,8 @@ else:
         add_rubrick(board_name, {"name": new_rubrick, "provider": provider})
         st.rerun()
 
-
+st.write("---")
+st.write("\n")
 if board_name:
     st.write("change board")
     board_name = st.text_input("Enter a board name:")
