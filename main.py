@@ -16,7 +16,7 @@ if __name__ == '__main__':
         refresh_coins()
     if args.train:
         from scripts.model_trainner import launch_train_model
-        launch_train_model(int(args.train),args.tickers)
+        launch_train_model(args.train,args.tickers)
     if not args.train and not args.refresh_coins:
         pages = {
             "Home": [
