@@ -38,7 +38,7 @@ def page():
         st.rerun()
 
 
-if user is not None or user == "":
+if user is not None or user != "":
     st.info(f"Welcome {user} !")
     board = get_board(user)
     page()
