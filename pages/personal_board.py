@@ -48,7 +48,18 @@ else:
                 if st.button(f"❌", key=f"rm_{item['symbol']}_{rubrick['name']}"):
                     delete_item(board_name, rubrick["name"], item["symbol"])
                     st.rerun()
-
+            st.write("➕ Add Investment")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                symbol = st.text_input(f"Symbol ({rubrick['name']})", key=f"sym_{rubrick['name']}")
+            with col2:
+                buy_price = st.number_input("Buy Price", min_value=0.0, key=f"price_{rubrick['name']}")
+            with col3:
+                quantity = st.number_input("Quantity", min_value=0.0, key=f"qty_{rubrick['name']}")
+            if st.button(f"Add {rubrick['name']} Investment", key=f"add_{rubrick['name']}"):
+                if symbol:
+                    add_item(board_name, rubrick["name"], symbol, buy_price, quantity)
+                    st.rerun()
             st.info(f"Subtotal {rubrick['name']}: {rubrick_pnl:+.2f}")
             total_board_pnl += rubrick_pnl
 
