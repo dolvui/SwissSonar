@@ -8,7 +8,6 @@ try:
     user = st.session_state['user']
 except:
     st.session_state['user'] = st.text_input("Username")
-    user = st.session_state['user']
 
 
 st.subheader("📊 Your Rubricks")
@@ -38,7 +37,8 @@ def page():
         st.rerun()
 
 
-if user is not None or user != "":
+if st.session_state['user'] or st.session_state['user'] != "":
     st.info(f"Welcome {user} !")
+    user = st.session_state['user']
     board = get_board(user)
     page()
