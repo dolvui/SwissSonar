@@ -54,7 +54,7 @@ else:
     for rubrick, rubrick_pnl, rubrick_items in rubrick_results:
         rubrick_color = "green" if rubrick_pnl >= 0 else "red"
 
-        with st.expander(f"📂 {rubrick['name']} ({rubrick.get('provider', '?')})", expanded=True):
+        with st.expander(f"📂 {rubrick['name']} ({rubrick.get('provider', '?')} :{rubrick_color}[{rubrick_pnl}])", expanded=True):
             st.markdown(
                 f"<h3>{rubrick['name']} <span style='float:right; color:{rubrick_color};'>{rubrick_pnl:+.2f}</span></h3>",
                 unsafe_allow_html=True
