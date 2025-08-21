@@ -43,7 +43,7 @@ class TrendReq(PyTrendReq):
 secret = None
 reddit = None
 key = None
-is_running_on_github = True
+is_running_on_github = False
 
 try:
     with open("secret.json", 'r', encoding='utf-8') as json_file:
@@ -51,9 +51,9 @@ try:
 except:
     try:
         secret = st.secrets
-        is_running_on_github = False
+        secret['client_id']
     except:
-        is_running_on_github = False
+        is_running_on_github = True
 
 if is_running_on_github:
     import os
