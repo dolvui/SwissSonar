@@ -38,5 +38,5 @@ def page():
 
 
 if user:
-    st.write(f"Welcome {user} !")
+    st.info(f"Welcome {user} !")
     page()
