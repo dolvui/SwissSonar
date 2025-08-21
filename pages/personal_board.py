@@ -13,22 +13,22 @@ def page():
                 st.write(f"- {item}")
                 if st.button(f"❌ Remove {item}", key=f"remove_{item}_{rubrick['name']}"):
                     delete_item(user, rubrick["name"], item)
-                    st.experimental_rerun()
+                    st.rerun()
 
             new_item = st.text_input(f"Add item to {rubrick['name']}", key=f"new_{rubrick['name']}")
             if st.button(f"➕ Add to {rubrick['name']}", key=f"add_{rubrick['name']}"):
                 add_item(user, rubrick["name"], new_item)
-                st.experimental_rerun()
+                st.rerun()
 
         if st.button(f"🗑️ Delete rubrick {rubrick['name']}", key=f"delete_{rubrick['name']}"):
             delete_rubrick(user, rubrick["name"])
-            st.experimental_rerun()
+            st.rerun()
 
     st.write("---")
     new_rubrick = st.text_input("➕ Add new rubrick")
     if st.button("Add Rubrick"):
         add_rubrick(user, new_rubrick)
-        st.experimental_rerun()
+        st.rerun()
 
 
 if user:
