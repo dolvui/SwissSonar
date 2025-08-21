@@ -10,7 +10,6 @@ try:
 except Exception as e:
     st.session_state['user'] = st.text_input("Username")
     user = st.session_state['user']
-    board = get_board(user)
 
 
 st.subheader("📊 Your Rubricks")
@@ -42,4 +41,5 @@ def page():
 
 if user:
     st.info(f"Welcome {user} !")
+    board = get_board(user)
     page()
