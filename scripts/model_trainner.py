@@ -31,6 +31,7 @@ def benchmark_model(model_path, crypto_id, days, window, steps_ahead,norms):
     # Last window for prediction
     last_window = torch.tensor(prices_norm[-window:], dtype=torch.float32).unsqueeze(0).unsqueeze(2)
     models = fetch_models_by_name(Path(model_path).name.replace(".pt", "").replace("tigerV2_", ""))
+    print(models)
     if not models or len(models) == 0:
         print("No models found")
 
