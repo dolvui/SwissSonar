@@ -17,30 +17,49 @@ else:
     #st.title(f"📊 Board: {board_name}")
 
     board = get_board(board_name)
+
+    # --- compute all pnl before rendering ---
+    rubrick_results = []
     total_board_pnl = 0.0
-    color = "green" if total_board_pnl >= 0 else "red"
-    st.markdown(
-        f"<h1>📊 {board_name} <span style='float:right; color:{color};'>{total_board_pnl:+.2f}</span></h1>",
-        unsafe_allow_html=True
-    )
+
     for rubrick in board["rubricks"]:
         rubrick_pnl = 0.0
+        rubrick_items = []
 
-        # compute rubrick PnL first
         for item in rubrick["items"]:
-            current_price = 42  # TODO: get_price(rubrick.get("provider"), item["symbol"])
+            current_price = 42  # TODO replace with get_price()
             delta = (current_price - item["buy_price"]) / item["buy_price"] * 100 if item["buy_price"] > 0 else 0
-            rubrick_pnl += (current_price - item["buy_price"]) * item["quantity"]
+            pnl_value = (current_price - item["buy_price"]) * item["quantity"]
+            rubrick_pnl += pnl_value
+
+            rubrick_items.append({
+                "symbol": item["symbol"],
+                "buy_price": item["buy_price"],
+                "quantity": item["quantity"],
+                "current": current_price,
+                "delta": delta,
+            })
 
         total_board_pnl += rubrick_pnl
+        rubrick_results.append((rubrick, rubrick_pnl, rubrick_items))
+
+    # --- render board title ---
+    board_color = "green" if total_board_pnl >= 0 else "red"
+    st.markdown(
+        f"<h1>📊 {board_name} <span style='float:right; color:{board_color};'>{total_board_pnl:+.2f}</span></h1>",
+        unsafe_allow_html=True
+    )
+
+    # --- render rubricks ---
+    for rubrick, rubrick_pnl, rubrick_items in rubrick_results:
         rubrick_color = "green" if rubrick_pnl >= 0 else "red"
 
-        # now render expander with pnl
-        with st.expander(
-                f"📂 {rubrick['name']} ({rubrick.get('provider', '?')}) ",
-                f"<span style='float:right; color:{rubrick_color};'>{rubrick_pnl:+.2f}</span>",
-                expanded=True
-        ):
+        with st.expander(f"📂 {rubrick['name']} ({rubrick.get('provider', '?')})", expanded=True):
+            st.markdown(
+                f"<h3>{rubrick['name']} <span style='float:right; color:{rubrick_color};'>{rubrick_pnl:+.2f}</span></h3>",
+                unsafe_allow_html=True
+            )
+
             # Header row
             col1, col2, col3, col4, col5 = st.columns([2, 2, 2, 2, 1])
             col1.write("**Symbol**")
@@ -49,18 +68,15 @@ else:
             col4.write("**Current**")
             col5.write("**Δ%**")
 
-            # Item rows
-            for item in rubrick["items"]:
-                current_price = 42  # again for display
-                delta = (current_price - item["buy_price"]) / item["buy_price"] * 100 if item["buy_price"] > 0 else 0
-
+            # Rows
+            for item in rubrick_items:
                 col1, col2, col3, col4, col5 = st.columns([2, 2, 2, 2, 1])
                 col1.write(f"**{item['symbol']}**")
                 col2.write(item["buy_price"])
                 col3.write(item["quantity"])
-                col4.write(current_price)
+                col4.write(item["current"])
                 col5.markdown(
-                    f"<span style='color: {'green' if delta >= 0 else 'red'}'>{delta:+.2f}%</span>",
+                    f"<span style='color: {'green' if item['delta'] >= 0 else 'red'}'>{item['delta']:+.2f}%</span>",
                     unsafe_allow_html=True
                 )
 
