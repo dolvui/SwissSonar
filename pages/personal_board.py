@@ -1,10 +1,30 @@
+from board import get_board, add_rubrick, delete_rubrick, add_item, delete_item
 import streamlit as st
 
-st.set_page_config(page_title="Personal Board", layout="wide", page_icon="👁️")
-st.title("Personal Board page")
+user = st.session_state["user"]
+board = get_board(user)
 
+st.subheader("📊 Your Rubricks")
 
-st.session_state['user'] = st.text_input("Username")
+for rubrick in board["rubricks"]:
+    with st.expander(rubrick["name"]):
+        for item in rubrick["items"]:
+            st.write(f"- {item}")
+            if st.button(f"❌ Remove {item}", key=f"remove_{item}_{rubrick['name']}"):
+                delete_item(user, rubrick["name"], item)
+                st.experimental_rerun()
 
-if st.session_state['user']:
-    st.write(f"Welcome {st.session_state['user']}")
+        new_item = st.text_input(f"Add item to {rubrick['name']}", key=f"new_{rubrick['name']}")
+        if st.button(f"➕ Add to {rubrick['name']}", key=f"add_{rubrick['name']}"):
+            add_item(user, rubrick["name"], new_item)
+            st.experimental_rerun()
+
+    if st.button(f"🗑️ Delete rubrick {rubrick['name']}", key=f"delete_{rubrick['name']}"):
+        delete_rubrick(user, rubrick["name"])
+        st.experimental_rerun()
+
+st.write("---")
+new_rubrick = st.text_input("➕ Add new rubrick")
+if st.button("Add Rubrick"):
+    add_rubrick(user, new_rubrick)
+    st.experimental_rerun()
