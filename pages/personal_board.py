@@ -36,7 +36,14 @@ else:
         rubrick_items = []
 
         for item in rubrick["items"]:
-            current_price = get_price(rubrick.get('provider', '?'),item["symbol"])
+            current_price = 0.0
+
+            if rubrick["provider"] == "crypto":
+                current_price = get_price(rubrick.get('provider', '?'),cryptos_available[item["symbol"]])
+            if rubrick["provider"] == "stock":
+                pass
+            if rubrick["provider"] == "forex":
+                pass
             delta = (current_price - item["buy_price"]) / item["buy_price"] * 100 if item["buy_price"] > 0 else 0
             pnl_value = (current_price - item["buy_price"]) * item["quantity"]
             rubrick_pnl += pnl_value
