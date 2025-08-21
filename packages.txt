@@ -5,4 +5,3 @@ libfontconfig1
 chromium
 chromium-driver
 git
-yaml
