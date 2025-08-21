@@ -6,8 +6,7 @@ board = None
 
 try:
     user = st.session_state['user']
-    board = get_board(user)
-except Exception as e:
+except:
     st.session_state['user'] = st.text_input("Username")
     user = st.session_state['user']
 
@@ -39,7 +38,7 @@ def page():
         st.rerun()
 
 
-if user:
+if user is not None:
     st.info(f"Welcome {user} !")
     board = get_board(user)
     page()
