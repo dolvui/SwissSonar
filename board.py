@@ -25,7 +25,7 @@ def get_board(board_name: str):
 def add_rubrick(board_name: str, rubrick: dict):
     boards.update_one(
         {"board_name": board_name},
-        {"$push": {"rubricks": {"name": ['name'], "provider" : rubrick['provider'],"items": []}}},
+        {"$push": {"rubricks": {"name": rubrick['name'], "provider" : rubrick['provider'],"items": []}}},
         upsert=True
     )
 
