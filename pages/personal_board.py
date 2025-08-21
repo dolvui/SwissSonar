@@ -54,7 +54,7 @@ else:
     for rubrick, rubrick_pnl, rubrick_items in rubrick_results:
         rubrick_color = "green" if rubrick_pnl >= 0 else "red"
 
-        with st.expander(f"📂 {rubrick['name']} ({rubrick.get('provider', '?')} )       :{rubrick_color}[{rubrick_pnl:+.2f}]", expanded=True):
+        with st.expander(f"📂 {rubrick['name']} ({rubrick.get('provider', '?')} )       :{rubrick_color}[{rubrick_pnl:+.2f}]", expanded=False):
             # st.markdown(
             #     f"<h3>{rubrick['name']} <span style='float:right; color:{rubrick_color};'>{rubrick_pnl:+.2f}</span></h3>",
             #     unsafe_allow_html=True
@@ -106,4 +106,12 @@ else:
     provider = st.selectbox("Provider", ["crypto", "stock", "forex"], key="provider")
     if st.button("Add Rubrick") and new_rubrick:
         add_rubrick(board_name, {"name": new_rubrick, "provider": provider})
+        st.rerun()
+
+
+if board_name:
+    st.write("change board")
+    board_name = st.text_input("Enter a board name:")
+    if st.button("Load Board"):
+        st.session_state["board_name"] = board_name
         st.rerun()
