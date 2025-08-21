@@ -1,5 +1,6 @@
 import streamlit as st
 from board import get_board, add_rubrick, delete_rubrick, add_item, delete_item
+from prices import get_price
 
 st.set_page_config(page_title="Personal Board", layout="wide", page_icon="👁️")
 
@@ -27,7 +28,7 @@ else:
         rubrick_items = []
 
         for item in rubrick["items"]:
-            current_price = 42  # TODO replace with get_price()
+            current_price = get_price(rubrick.get('provider', '?'),item["symbol"])
             delta = (current_price - item["buy_price"]) / item["buy_price"] * 100 if item["buy_price"] > 0 else 0
             pnl_value = (current_price - item["buy_price"]) * item["quantity"]
             rubrick_pnl += pnl_value
