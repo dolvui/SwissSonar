@@ -37,7 +37,7 @@ else:
 
         # now render expander with pnl
         with st.expander(
-                f"📂 {rubrick['name']} ({rubrick.get('provider', '?')}) "
+                f"📂 {rubrick['name']} ({rubrick.get('provider', '?')}) ",
                 f"<span style='float:right; color:{rubrick_color};'>{rubrick_pnl:+.2f}</span>",
                 expanded=True
         ):
