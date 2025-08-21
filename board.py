@@ -17,15 +17,15 @@ boards = db.boards
 def get_board(board_name: str):
     board = boards.find_one({"board_name": board_name})
     if not board:
-        board = {"board_name": board_name, "rubricks": [], "created_at": datetime.utcnow()}
+        board = {"board_name": board_name, "rubricks": [], "created_at": datetime.now()}
         boards.insert_one(board)
     return board
 
 
-def add_rubrick(board_name: str, rubrick: str):
+def add_rubrick(board_name: str, rubrick: dict):
     boards.update_one(
         {"board_name": board_name},
-        {"$push": {"rubricks": {"name": rubrick, "items": []}}},
+        {"$push": {"rubricks": {"name": ['name'], "provider" : rubrick['provider'],"items": []}}},
         upsert=True
     )
 
