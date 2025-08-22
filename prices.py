@@ -7,8 +7,10 @@ c = CurrencyRates()
 yf.enable_debug_mode()
 
 def normalize_symbol(symbol: str) -> str:
+    symbol = symbol.split("-")[0]
+    symbol = symbol.replace(" ", "")
     if symbol in ["MC", "OR", "AI", "BN", "DG"]:
-        return f"{symbol}.PA"
+        return f"{symbol}"
     return symbol
 
 def get_price_cryptocurrency(symbol):
@@ -20,11 +22,10 @@ def get_price_cryptocurrency(symbol):
         return -1.0
 
 def get_price_stock(symbol):
-    # symbol = symbol.split("-")[0]
-    # symbol = normalize_symbol(symbol.replace(" ",""))
-    # st.info(symbol)
+    symbol = normalize_symbol(symbol)
     st.info(symbol)
     ticker = yf.Ticker(symbol)
+    st.info(ticker.info)
     data = ticker.history(period="1d")
     #print(data['Open'])
     #print(data['High'])
