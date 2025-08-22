@@ -19,16 +19,17 @@ def get_price_cryptocurrency(symbol):
 
 def get_price_stock(symbol):
     symbol = symbol.split("-")[0]
-    symbol = normalize_symbol(symbol.replace(" ",""))
+    symbol = symbol.replace(" ","")#normalize_symbol()
     st.info(symbol)
     ticker = yf.Ticker(symbol)
     data = ticker.history(period="1d")
-    print(data['Open'])
-    print(data['High'])
-    print(data['Low'])
+    print(data)
+    #print(data['Open'])
+    #print(data['High'])
+    #print(data['Low'])
     #print(data['Adj Close'])
-    print(data['Close'])
-    print(data['Volume'])
+    #print(data['Close'])
+    #print(data['Volume'])
     return 0.0#float(data["Adj Close"].iloc[-1])
 
 def get_price_forex(symbol):
