@@ -21,7 +21,7 @@ if __name__ == '__main__':
         pages = {
             "Home": [
                 st.Page("pages/home.py", title="Home page"),
-                st.Page("pages/personal_board.py", title="personal board"),
+                st.Page("pages/personal_board.py", title="Personal board"),
             ],
             "Resources": [
                 st.Page("pages/crypto_page.py", title="Crypto tools"),

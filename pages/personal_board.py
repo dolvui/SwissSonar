@@ -38,9 +38,9 @@ else:
             current_price = 0.0
 
             if rubrick["provider"] == "crypto":
-                current_price = get_price_cryptocurrency(cryptos_available[item["symbol"]])
+                current_price = get_price_cryptocurrency(cryptos_available[item["symbol"]],item["buy_price"])
             if rubrick["provider"] == "stock":
-                current_price = get_price_stock(item["symbol"])
+                current_price = get_price_stock(item["symbol"],item["buy_price"])
             if rubrick["provider"] == "forex":
                 current_price = get_price_forex(item["symbol"],item["buy_price"])
             delta = (current_price - item["buy_price"]) / item["buy_price"] * 100 if item["buy_price"] > 0 else 0
@@ -86,7 +86,7 @@ else:
                 col3.write(item["quantity"])
                 col4.write(item["current"])
                 col5.markdown(
-                    f"<span style='color: {'green' if item['delta'] >= 0 else 'red'}'>{item['delta']:+.2f}%</span>",
+                    f"<span style='color: {'green' if item['delta'] >= 0 else 'red'}'>{item['delta']:+.6f}%</span>",
                     unsafe_allow_html=True
                 )
 
@@ -110,7 +110,7 @@ else:
                     default = get_price_stock(symbol)
                 if rubrick["provider"] == "forex" and symbol:
                     default = get_price_forex(symbol, 0.0)
-                buy_price = st.number_input("Buy Price", min_value=0.0, key=f"price_{rubrick['name']}",value=default)
+                buy_price = st.number_input("Buy Price", min_value=0.0, key=f"price_{rubrick['name']}",value=default,format="%0.6f")
             with col3:
                 quantity = st.number_input("Quantity", min_value=0.0, key=f"qty_{rubrick['name']}")
             if st.button(f"Add {rubrick['name']} Investment", key=f"add_{rubrick['name']}"):
