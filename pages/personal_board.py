@@ -1,6 +1,6 @@
 import streamlit as st
 from board import get_board, add_rubrick, delete_rubrick, add_item, delete_item
-from prices import get_price
+from prices import get_price_cryptocurrency, get_price_stock, get_price_forex
 from mongodb import fetch_token_24h
 from pytickersymbols import PyTickerSymbols
 stock_data = PyTickerSymbols()
