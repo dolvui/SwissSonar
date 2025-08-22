@@ -6,7 +6,7 @@ from pytickersymbols import PyTickerSymbols
 stock_data = PyTickerSymbols()
 
 cryptos_available = {e['ticker']: e['gecko_id'] for e in fetch_token_24h()}
-stock_symbols = PyTickerSymbols().get_all_stocks() #get_stock_by_google_symbol(None)#
+stock_symbols = PyTickerSymbols().get_all_stocks()
 forex_available = ["USD", "EUR", "GBP", "JPY"]
 
 st.set_page_config(page_title="Personal Board", layout="wide", page_icon="👁️")
@@ -103,7 +103,14 @@ else:
                 if rubrick["provider"] == "forex":
                     symbol = st.selectbox("Select forex available", options=forex_available,key=f"sym_{rubrick['name']}")
             with col2:
-                buy_price = st.number_input("Buy Price", min_value=0.0, key=f"price_{rubrick['name']}")
+                default = 0.0
+                if rubrick["provider"] == "crypto":
+                    default = current_price = get_price_cryptocurrency(cryptos_available[symbol])
+                if rubrick["provider"] == "stock":
+                    default = get_price_stock(symbol)
+                if rubrick["provider"] == "forex":
+                    default = get_price_forex(symbol, 0.0)
+                buy_price = st.number_input("Buy Price", min_value=0.0, key=f"price_{rubrick['name']}",value=default)
             with col3:
                 quantity = st.number_input("Quantity", min_value=0.0, key=f"qty_{rubrick['name']}")
             if st.button(f"Add {rubrick['name']} Investment", key=f"add_{rubrick['name']}"):
