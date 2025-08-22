@@ -10,7 +10,7 @@ def normalize_symbol(symbol: str) -> str:
     symbol = symbol.split("-")[0]
     symbol = symbol.replace(" ", "")
     if symbol in ["MC", "OR", "AI", "BN", "DG"]:
-        return f"{symbol}"
+        return f"{symbol}.PA"
     return symbol
 
 def get_price_cryptocurrency(symbol):
