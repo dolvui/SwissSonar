@@ -14,7 +14,13 @@ def get_price(provider, symbol):
             ticker = yf.Ticker(symbol)
             print(ticker)
             data = ticker.history(period="1d")
-            print(data)
+            print(data['Open'])
+            print(data['High'])
+            print(data['Low'])
+            print(data['Close'])
+            print(data['Adj'])
+            print(data['Close'])
+            print(data['Volume'])
             return float(data["Close"].iloc[-1])
         except:
             return -1.0
