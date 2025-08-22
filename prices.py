@@ -31,5 +31,5 @@ def get_price_forex(symbol):
     try:
         return c.get_rate(symbol, "USD")
     except Exception as e:
-        print(e)
+        st.info(e)
         return 0.0
