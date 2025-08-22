@@ -26,7 +26,7 @@ def get_price_stock(symbol):
     st.info(symbol)
     ticker = yf.Ticker(symbol)
     data = ticker.history(period="1d")
-    st.info(data)
+    st.info(data['Close'])
     #print(data['Open'])
     #print(data['High'])
     #print(data['Low'])
