@@ -20,11 +20,14 @@ def get_price_cryptocurrency(symbol):
     except:
         return -1.0
 
-def get_price_stock(symbol):
-    symbol = normalize_symbol(symbol)
-    ticker = yf.Ticker(symbol)
-    price = ticker.info['regularMarketPrice']
-    return price
+def get_price_stock(symbol,default = 0.0):
+    try:
+        symbol = normalize_symbol(symbol)
+        ticker = yf.Ticker(symbol)
+        price = ticker.info['regularMarketPrice']
+        return price
+    except:
+        return default
 
 def get_price_forex(symbol,buy_price):
     try:
