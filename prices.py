@@ -1,7 +1,7 @@
 import yfinance as yf
 import requests
 from forex_python.converter import CurrencyRates
-
+import streamlit as st
 c = CurrencyRates()
 
 def normalize_symbol(symbol: str) -> str:
@@ -20,7 +20,7 @@ def get_price_cryptocurrency(symbol):
 def get_price_stock(symbol):
     symbol = symbol.split("-")[0]
     symbol = normalize_symbol(symbol.replace(" ",""))
-    print(symbol)
+    st.info(symbol)
     ticker = yf.Ticker(symbol)
     data = ticker.history(period="1d")
     print(data['Open'])
