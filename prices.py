@@ -26,12 +26,31 @@ def get_price_stock(symbol):
     st.info(symbol)
     ticker = yf.Ticker(symbol)
     data = ticker.history(period="1d")
-    st.info(data['Open'].iloc)
-    st.info(data['High'].iloc)
-    st.info(data['Low'].iloc)
+    try:
+        st.info(data['Open'].iloc[-1])
+    except:
+        pass
+
+    try:
+        st.info(data['High'].iloc[-1])
+    except:
+        pass
+
+    try:
+        st.info(data['Low'].iloc[-1])
+    except:
+        pass
     #st.info(data['Close'].iloc)
-    st.info(data['Close'].iloc)
-    st.info(data['Volume'].iloc)
+
+    try:
+        st.info(data['Close'].iloc[-1])
+    except:
+        pass
+
+    try:
+        st.info(data['Volume'].iloc[-1])
+    except:
+        pass
     #print(data['Open'])
     #print(data['High'])
     #print(data['Low'])
