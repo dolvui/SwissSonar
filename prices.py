@@ -24,4 +24,7 @@ def get_price_stock(symbol):
     return 0.0#float(data["Adj Close"].iloc[-1])
 
 def get_price_forex(symbol):
-    return c.get_rate(symbol, "USD")
+    try:
+        return c.get_rate(symbol, "USD")
+    except:
+        return -1.0
