@@ -20,8 +20,9 @@ def get_price_cryptocurrency(symbol):
         return -1.0
 
 def get_price_stock(symbol):
-    symbol = symbol.split("-")[0]
-    symbol = normalize_symbol(symbol.replace(" ",""))
+    # symbol = symbol.split("-")[0]
+    # symbol = normalize_symbol(symbol.replace(" ",""))
+    # st.info(symbol)
     st.info(symbol)
     ticker = yf.Ticker(symbol)
     data = ticker.history(period="1d")
