@@ -30,7 +30,7 @@ def get_price_stock(symbol):
 def get_price_forex(symbol):
     try:
         st.info(c.get_rate(symbol))
-        return c.get_rate(symbol)
+        return c.get_rates(symbol)
     except Exception as e:
         st.info(e)
         return 0.0
