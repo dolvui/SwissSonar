@@ -23,7 +23,6 @@ def get_price_cryptocurrency(symbol):
 
 def get_price_stock(symbol):
     symbol = normalize_symbol(symbol)
-    st.info(symbol)
     ticker = yf.Ticker(symbol)
     data = ticker.history(period="1d")
     # try:
@@ -57,7 +56,9 @@ def get_price_stock(symbol):
     #print(data['Adj Close'])
     #print(data['Close'])
     #print(data['Volume'])
-    return float(data["Close"].iloc[-1])
+    price = ticker.info['regularMarketPrice']
+    return price
+    #return float(data["Close"].iloc[-1])
 
 def get_price_forex(symbol):
     try:
