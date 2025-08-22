@@ -25,8 +25,8 @@ def get_price_stock(symbol):
     symbol = normalize_symbol(symbol)
     st.info(symbol)
     ticker = yf.Ticker(symbol)
-    st.info(ticker.info)
     data = ticker.history(period="1d")
+    st.info(data)
     #print(data['Open'])
     #print(data['High'])
     #print(data['Low'])
@@ -39,4 +39,4 @@ def get_price_forex(symbol):
     try:
         return c.get_rate(symbol, "USD")
     except:
-        return -1.0
+        return 0.0
