@@ -29,7 +29,8 @@ def get_price_stock(symbol):
 
 def get_price_forex(symbol):
     try:
-        return c.get_rate(symbol, "USD")
+        st.info(c.get_rate(symbol))
+        return c.get_rate(symbol)
     except Exception as e:
         st.info(e)
         return 0.0
