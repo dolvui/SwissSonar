@@ -12,7 +12,7 @@ def normalize_symbol(symbol: str) -> str:
         return f"{symbol}.PA"
     return symbol
 
-def get_price_cryptocurrency(symbol,default):
+def get_price_cryptocurrency(symbol,default=0.0):
     try:
         url = f"https://api.coingecko.com/api/v3/simple/price?ids={symbol.lower()}&vs_currencies=usd"
         r = requests.get(url).json()
