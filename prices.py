@@ -9,7 +9,7 @@ yf.enable_debug_mode()
 def normalize_symbol(symbol: str) -> str:
     symbol = symbol.split("-")[0]
     symbol = symbol.replace(" ", "")
-    if symbol in ["MC", "OR", "AI", "BN", "DG"]:
+    if symbol: #in ["MC", "OR", "AI", "BN", "DG"]:
         return f"{symbol}.PA"
     return symbol
 
@@ -24,44 +24,12 @@ def get_price_cryptocurrency(symbol):
 def get_price_stock(symbol):
     symbol = normalize_symbol(symbol)
     ticker = yf.Ticker(symbol)
-    data = ticker.history(period="1d")
-    # try:
-    #     st.info(data['Open'].iloc[-1])
-    # except:
-    #     pass
-    #
-    # try:
-    #     st.info(data['High'].iloc[-1])
-    # except:
-    #     pass
-    #
-    # try:
-    #     st.info(data['Low'].iloc[-1])
-    # except:
-    #     pass
-    # #st.info(data['Close'].iloc)
-    #
-    # try:
-    #     st.info(data['Close'].iloc[-1])
-    # except:
-    #     pass
-    #
-    # try:
-    #     st.info(data['Volume'].iloc[-1])
-    # except:
-    #     pass
-    #print(data['Open'])
-    #print(data['High'])
-    #print(data['Low'])
-    #print(data['Adj Close'])
-    #print(data['Close'])
-    #print(data['Volume'])
     price = ticker.info['regularMarketPrice']
     return price
-    #return float(data["Close"].iloc[-1])
 
 def get_price_forex(symbol):
     try:
         return c.get_rate(symbol, "USD")
-    except:
+    except Exception as e:
+        print(e)
         return 0.0
