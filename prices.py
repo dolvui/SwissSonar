@@ -4,6 +4,11 @@ from forex_python.converter import CurrencyRates
 
 c = CurrencyRates()
 
+def normalize_symbol(symbol: str) -> str:
+    if symbol in ["MC", "OR", "AI", "BN", "DG"]:
+        return f"{symbol}.PA"
+    return symbol
+
 def get_price_cryptocurrency(symbol):
     try:
         url = f"https://api.coingecko.com/api/v3/simple/price?ids={symbol.lower()}&vs_currencies=usd"
@@ -13,6 +18,7 @@ def get_price_cryptocurrency(symbol):
         return -1.0
 
 def get_price_stock(symbol):
+    symbol = normalize_symbol(symbol)
     ticker = yf.Ticker(symbol)
     data = ticker.history(period="1d")
     print(data['Open'])
@@ -21,7 +27,7 @@ def get_price_stock(symbol):
     print(data['Adj Close'])
     print(data['Close'])
     print(data['Volume'])
-    return 0.0#float(data["Adj Close"].iloc[-1])
+    return float(data["Adj Close"].iloc[-1])
 
 def get_price_forex(symbol):
     try:
