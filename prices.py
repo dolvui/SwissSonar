@@ -21,7 +21,7 @@ def get_price_stock(symbol):
     print(data['Adj Close'])
     print(data['Close'])
     print(data['Volume'])
-    return float(data["Close"].iloc[-1])
+    return float(data["Adj Close"].iloc[-1])
 
 def get_price_forex(symbol):
     return c.get_rate(symbol, "USD")
