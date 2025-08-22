@@ -26,7 +26,7 @@ def get_price_stock(symbol):
     print(data['Open'])
     print(data['High'])
     print(data['Low'])
-    print(data['Adj Close'])
+    #print(data['Adj Close'])
     print(data['Close'])
     print(data['Volume'])
     return 0.0#float(data["Adj Close"].iloc[-1])
