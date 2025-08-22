@@ -99,8 +99,7 @@ else:
                 if rubrick["provider"] == "crypto":
                     symbol = st.selectbox("Select crypto available", options=cryptos_available.keys(),key=f"sym_{rubrick['name']}")
                 if rubrick["provider"] == "stock":
-                    print(stock_symbols)
-                    symbol = st.selectbox("Select stock available", options=[f"{s['symbol']} - {s['name']}" for s in stock_symbols],key=f"sym_{rubrick['name']}")
+                    symbol = st.selectbox("Select stock available", options=[f"{s}" for s in stock_symbols],key=f"sym_{rubrick['name']}")
                 if rubrick["provider"] == "forex":
                     symbol = st.selectbox("Select forex available", options=forex_available,key=f"sym_{rubrick['name']}")
             with col2:

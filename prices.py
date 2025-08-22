@@ -4,6 +4,8 @@ from forex_python.converter import CurrencyRates
 import streamlit as st
 c = CurrencyRates()
 
+yf.enable_debug_mode()
+
 def normalize_symbol(symbol: str) -> str:
     if symbol in ["MC", "OR", "AI", "BN", "DG"]:
         return f"{symbol}.PA"
