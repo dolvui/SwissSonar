@@ -12,7 +12,9 @@ def get_price(provider, symbol):
     elif provider == "stock":
         try:
             ticker = yf.Ticker(symbol)
+            print(ticker)
             data = ticker.history(period="1d")
+            print(data)
             return float(data["Close"].iloc[-1])
         except:
             return -1.0
