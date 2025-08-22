@@ -104,11 +104,11 @@ else:
                     symbol = st.selectbox("Select forex available", options=forex_available,key=f"sym_{rubrick['name']}")
             with col2:
                 default = 0.0
-                if rubrick["provider"] == "crypto":
+                if rubrick["provider"] == "crypto" and symbol:
                     default = current_price = get_price_cryptocurrency(cryptos_available[symbol])
-                if rubrick["provider"] == "stock":
+                if rubrick["provider"] == "stock" and symbol:
                     default = get_price_stock(symbol)
-                if rubrick["provider"] == "forex":
+                if rubrick["provider"] == "forex" and symbol:
                     default = get_price_forex(symbol, 0.0)
                 buy_price = st.number_input("Buy Price", min_value=0.0, key=f"price_{rubrick['name']}",value=default)
             with col3:
