@@ -42,7 +42,7 @@ else:
             if rubrick["provider"] == "stock":
                 current_price = get_price_stock(item["symbol"])
             if rubrick["provider"] == "forex":
-                current_price = get_price_forex(item["symbol"])
+                current_price = get_price_forex(item["symbol"],item["buy_price"])
             delta = (current_price - item["buy_price"]) / item["buy_price"] * 100 if item["buy_price"] > 0 else 0
             pnl_value = (current_price - item["buy_price"]) * item["quantity"]
             rubrick_pnl += pnl_value

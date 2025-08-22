@@ -2,9 +2,8 @@ import yfinance as yf
 import requests
 from forex_python.converter import CurrencyRates
 import streamlit as st
-c = CurrencyRates()
 
-yf.enable_debug_mode()
+c = CurrencyRates()
 
 def normalize_symbol(symbol: str) -> str:
     symbol = symbol.split("-")[0]
@@ -27,10 +26,9 @@ def get_price_stock(symbol):
     price = ticker.info['regularMarketPrice']
     return price
 
-def get_price_forex(symbol):
+def get_price_forex(symbol,buy_price):
     try:
-        st.info(c.get_rates(symbol))
-        return c.get_rates(symbol)
+        return c.get_rate(symbol,'USD')
     except Exception as e:
-        st.info(e)
-        return 0.0
+        st.error('forex seems down !')
+        return buy_price
