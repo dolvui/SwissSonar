@@ -34,9 +34,9 @@ def get_price_stocks(stocks):
     ret = []
 
     for stock in stocks:
-        print(stock)
-        st.write(stock)
-        symbols_sting.append(normalize_symbol(stock['symbol']))
+        #print(stock)
+        #st.write(stock)
+        symbols_sting.append(normalize_symbol(f"{stock['symbol']}-{stock['name']}"))
 
     prices = [0.0 for symbol in symbols_sting]
     try:
