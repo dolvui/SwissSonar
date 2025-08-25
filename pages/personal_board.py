@@ -89,8 +89,8 @@ else:
                     f"<span style='color: {'green' if item['delta'] >= 0 else 'red'}'>{item['delta']:+.6f}%</span>",
                     unsafe_allow_html=True
                 )
-
-                if st.button(f"❌", key=f"rm_{item['symbol']}_{rubrick['name']}"):
+                from random import randint
+                if st.button(f"❌", key=f"rm_{item['symbol']}_{rubrick['name']}_{randint(1,420)}"):
                     delete_item(board_name, rubrick["name"], item["symbol"])
                     st.rerun()
             st.write("➕ Add Investment")
