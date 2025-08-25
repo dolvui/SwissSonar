@@ -158,10 +158,10 @@ if st.button("🔎 Analyse"):
         st.write(e)
         st.error('Get limit rate, wait 60 sec before call an analyse !')
 
-st.divider(width=2)
+st.divider()
 
 from pytickersymbols import PyTickerSymbols
-
+from prices import get_price_stock
 st.subheader("Crypto Dashboard Overview")
 
 stock_symbols = PyTickerSymbols().get_all_stocks()
@@ -169,7 +169,8 @@ stock_symbols = PyTickerSymbols().get_all_stocks()
 stocks = []
 
 for s in stock_symbols:
-    stocks.append({ "name": s["name"], "symbol": s["symbol"] , "country": s["country"], "industries": s["industries"] })
+    price = get_price_stock(s["symbol"])
+    stocks.append({ "name": s["name"], "symbol": s["symbol"] , "country": s["country"], "price" : price, "industries": s["industries"] })
 
 st.dataframe(
     stocks,
