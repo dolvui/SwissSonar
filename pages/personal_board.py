@@ -3,7 +3,6 @@ from board import get_board, add_rubrick, delete_rubrick, add_item, delete_item
 from prices import get_price_cryptocurrency, get_price_stock, get_price_forex
 from mongodb import fetch_token_24h
 from pytickersymbols import PyTickerSymbols
-stock_data = PyTickerSymbols()
 
 cryptos_available = {e['ticker']: e['gecko_id'] for e in fetch_token_24h()}
 stock_symbols = PyTickerSymbols().get_all_stocks()
@@ -142,4 +141,5 @@ if board_name:
 from datetime import datetime
 if int(datetime.now().timestamp()) % (60*5) == 0:
     #info = st.info("refreshing")
+    print("refresh page ?")
     st.rerun()

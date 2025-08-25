@@ -70,12 +70,12 @@ if "loaded" not in st.session_state:
 # ========================
 # FRONT PAGE LAYOUT
 # ========================
-st.set_page_config(page_title="Crypto Analysis Dashboard", layout="wide", page_icon="📊")
+st.set_page_config(page_title="Analysis Dashboard", layout="wide", page_icon="📊")
 
-st.title("📊 Crypto Analysis Dashboard")
+st.title("📊 Analysis Dashboard")
 
 # ---- Dashboard Section ----
-st.subheader("Dashboard Overview")
+st.subheader("Crypto Dashboard Overview")
 
 st.subheader("Actions")
 actions1,actions2 = st.columns(2)
@@ -157,3 +157,16 @@ if st.button("🔎 Analyse"):
     except Exception as e:
         st.write(e)
         st.error('Get limit rate, wait 60 sec before call an analyse !')
+
+st.divider(2)
+
+from pytickersymbols import PyTickerSymbols
+
+st.subheader("Crypto Dashboard Overview")
+
+stock_symbols = PyTickerSymbols().get_all_stocks()
+
+st.dataframe(
+    stock_symbols[["id","name", "ticker", "current_price", "volume_24h", "market_cap", "heuristic"]],
+    use_container_width=True
+)
