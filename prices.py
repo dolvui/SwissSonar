@@ -60,9 +60,11 @@ def get_price_stocks(stocks):
         print(f"Download error: {e}")
         df = {}
 
+    print(df)
     for stock in stocks:
         symbol = normalize_symbol(f'{stock["symbol"]}-eklerh')
-        price = df.get(symbol, 0.0)
+
+        price = df.get(stock["name"], 0.0)
 
         ret.append({
             "name": stock["name"],
