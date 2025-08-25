@@ -169,7 +169,7 @@ stock_symbols = PyTickerSymbols().get_all_stocks()
 stocks = []
 
 for s in stock_symbols:
-    stocks.append({ "name": s["name"], "symbol": s["symbol"] , "country": s["country"], "industry": s["industry"] })
+    stocks.append({ "name": s["name"], "symbol": s["symbol"] , "country": s["country"], "industries": s["industries"] })
 
 st.dataframe(
     stocks,
