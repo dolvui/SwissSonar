@@ -61,7 +61,7 @@ def get_price_stocks(stocks):
         df = {}
 
     for stock in stocks:
-        symbol = normalize_symbol(stock["symbol"])
+        symbol = normalize_symbol(f'{stock["symbol"]}-eklerh')
         price = df.get(symbol, 0.0)
 
         ret.append({
