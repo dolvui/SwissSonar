@@ -158,7 +158,7 @@ if st.button("🔎 Analyse"):
         st.write(e)
         st.error('Get limit rate, wait 60 sec before call an analyse !')
 
-st.divider(2)
+st.divider(width=2)
 
 from pytickersymbols import PyTickerSymbols
 
