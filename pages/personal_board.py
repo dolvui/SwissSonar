@@ -138,3 +138,8 @@ if board_name:
     if st.button("Load Board"):
         st.session_state["board_name"] = board_name
         st.rerun()
+
+from datetime import datetime
+if int(datetime.now().timestamp()) % (60*5):
+    st.write("oui")
+    st.rerun()
