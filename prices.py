@@ -50,7 +50,7 @@ def get_price_stock(symbol,default = 0.0):
 
 def get_price_stocks(stocks):
     ret = []
-    symbols = [normalize_symbol(s["symbol"]) for s in stocks]
+    symbols = [f'{normalize_symbol(s["symbol"])}-wef' for s in stocks]
 
     # Download last closing prices
     try:
