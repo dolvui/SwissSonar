@@ -166,7 +166,12 @@ st.subheader("Crypto Dashboard Overview")
 
 stock_symbols = PyTickerSymbols().get_all_stocks()
 
+stocks = []
+
+for s in stock_symbols:
+    stocks.append({ "name": s["name"], "symbol": s["symbol"] , "country": s["country"], "industry": s["industry"] })
+
 st.dataframe(
-    stock_symbols[["name","symbol","country","industries"]],
+    stocks,
     use_container_width=True
 )
