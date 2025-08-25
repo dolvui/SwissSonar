@@ -33,18 +33,18 @@ def get_price_stocks(stocks):
     symbols_sting = []
     ret = []
 
+    for stock in stocks:
+        symbols_sting.append(normalize_symbol(stock['symbol']))
+
+    prices = [0.0 for symbol in symbols_sting]
     try:
-        for stock in stocks:
-            symbols_sting.append(normalize_symbol(stock['symbol']))
-
         prices = yf.Ticker(symbols_sting).info['regularMarketPrice']
-
-        for s,p in stocks,prices:
-            ret.append({ "name": s["name"], "symbol": s["symbol"] , "country": s["country"], "price" : p, "industries": s["industries"] })
-
-        return ret
     except:
-        return 0.0
+        pass
+    for s,p in stocks,prices:
+        ret.append({ "name": s["name"], "symbol": s["symbol"] , "country": s["country"], "price" : p, "industries": s["industries"] })
+
+    return ret
 
 def get_price_forex(symbol,buy_price):
     try:
