@@ -140,6 +140,6 @@ if board_name:
         st.rerun()
 
 from datetime import datetime
-if int(datetime.now().timestamp()) % (60*5):
-    st.write("oui")
+if int(datetime.now().timestamp()) % (60*5) == 0:
+    #info = st.info("refreshing")
     st.rerun()
