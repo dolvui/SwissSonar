@@ -1,12 +1,12 @@
 import streamlit as st
 from board import get_board, add_rubrick, delete_rubrick, add_item, delete_item
-from prices import get_price
+from prices import get_price_cryptocurrency, get_price_stock, get_price_forex
 from mongodb import fetch_token_24h
 from pytickersymbols import PyTickerSymbols
 stock_data = PyTickerSymbols()
 
 cryptos_available = {e['ticker']: e['gecko_id'] for e in fetch_token_24h()}
-stock_symbols = PyTickerSymbols().get_all_stocks() #get_stock_by_google_symbol(None)#
+stock_symbols = PyTickerSymbols().get_all_stocks()
 forex_available = ["USD", "EUR", "GBP", "JPY"]
 
 st.set_page_config(page_title="Personal Board", layout="wide", page_icon="👁️")
@@ -38,11 +38,11 @@ else:
             current_price = 0.0
 
             if rubrick["provider"] == "crypto":
-                current_price = get_price(rubrick.get('provider', '?'),cryptos_available[item["symbol"]])
+                current_price = get_price_cryptocurrency(cryptos_available[item["symbol"]],item["buy_price"])
             if rubrick["provider"] == "stock":
-                current_price = get_price(rubrick.get('provider', '?'),item["symbol"])
+                current_price = get_price_stock(item["symbol"],item["buy_price"])
             if rubrick["provider"] == "forex":
-                current_price = get_price(rubrick.get('provider', '?'), item["symbol"])
+                current_price = get_price_forex(item["symbol"],item["buy_price"])
             delta = (current_price - item["buy_price"]) / item["buy_price"] * 100 if item["buy_price"] > 0 else 0
             pnl_value = (current_price - item["buy_price"]) * item["quantity"]
             rubrick_pnl += pnl_value
@@ -86,7 +86,7 @@ else:
                 col3.write(item["quantity"])
                 col4.write(item["current"])
                 col5.markdown(
-                    f"<span style='color: {'green' if item['delta'] >= 0 else 'red'}'>{item['delta']:+.2f}%</span>",
+                    f"<span style='color: {'green' if item['delta'] >= 0 else 'red'}'>{item['delta']:+.6f}%</span>",
                     unsafe_allow_html=True
                 )
 
@@ -99,11 +99,18 @@ else:
                 if rubrick["provider"] == "crypto":
                     symbol = st.selectbox("Select crypto available", options=cryptos_available.keys(),key=f"sym_{rubrick['name']}")
                 if rubrick["provider"] == "stock":
-                    symbol = st.selectbox("Select stock available", options=[s['symbol'] for s in stock_symbols],key=f"sym_{rubrick['name']}")
+                    symbol = st.selectbox("Select stock available", options=[f"{s['symbol']} - {s['name']}" for s in stock_symbols],key=f"sym_{rubrick['name']}")
                 if rubrick["provider"] == "forex":
                     symbol = st.selectbox("Select forex available", options=forex_available,key=f"sym_{rubrick['name']}")
             with col2:
-                buy_price = st.number_input("Buy Price", min_value=0.0, key=f"price_{rubrick['name']}")
+                default = 0.0
+                if rubrick["provider"] == "crypto" and symbol:
+                    default = current_price = get_price_cryptocurrency(cryptos_available[symbol])
+                if rubrick["provider"] == "stock" and symbol:
+                    default = get_price_stock(symbol)
+                if rubrick["provider"] == "forex" and symbol:
+                    default = get_price_forex(symbol, 0.0)
+                buy_price = st.number_input("Buy Price", min_value=0.0, key=f"price_{rubrick['name']}",value=default,format="%0.6f")
             with col3:
                 quantity = st.number_input("Quantity", min_value=0.0, key=f"qty_{rubrick['name']}")
             if st.button(f"Add {rubrick['name']} Investment", key=f"add_{rubrick['name']}"):
