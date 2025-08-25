@@ -29,22 +29,47 @@ def get_price_stock(symbol,default = 0.0):
     except:
         return default
 
+# def get_price_stocks(stocks):
+#     symbols_sting = []
+#     ret = []
+#
+#     for stock in stocks:
+#         #print(stock)
+#         #st.write(stock)
+#         symbols_sting.append(normalize_symbol(f"{stock['symbol']}-{stock['name']}"))
+#
+#     prices = [0.0 for symbol in symbols_sting]
+#     try:
+#         prices = yf.Ticker(symbols_sting).info['regularMarketPrice']
+#     except:
+#         pass
+#     for s,p in stocks,prices:
+#         ret.append({ "name": s["name"], "symbol": s["symbol"] , "country": s["country"], "price" : p, "industries": s["industries"] })
+#
+#     return ret
+
 def get_price_stocks(stocks):
-    symbols_sting = []
     ret = []
+    symbols = [normalize_symbol(s["symbol"]) for s in stocks]
+
+    # Download last closing prices
+    try:
+        df = yf.download(symbols, period="1d")["Close"].iloc[-1]
+    except Exception as e:
+        print(f"Download error: {e}")
+        df = {}
 
     for stock in stocks:
-        #print(stock)
-        #st.write(stock)
-        symbols_sting.append(normalize_symbol(f"{stock['symbol']}-{stock['name']}"))
+        symbol = normalize_symbol(stock["symbol"])
+        price = df.get(symbol, 0.0)
 
-    prices = [0.0 for symbol in symbols_sting]
-    try:
-        prices = yf.Ticker(symbols_sting).info['regularMarketPrice']
-    except:
-        pass
-    for s,p in stocks,prices:
-        ret.append({ "name": s["name"], "symbol": s["symbol"] , "country": s["country"], "price" : p, "industries": s["industries"] })
+        ret.append({
+            "name": stock["name"],
+            "symbol": stock["symbol"],
+            "country": stock["country"],
+            "price": price,
+            "industries": stock["industries"],
+        })
 
     return ret
 
