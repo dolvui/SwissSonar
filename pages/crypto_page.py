@@ -161,16 +161,12 @@ if st.button("🔎 Analyse"):
 st.divider()
 
 from pytickersymbols import PyTickerSymbols
-from prices import get_price_stock
-st.subheader("Crypto Dashboard Overview")
+from prices import get_price_stocks
+st.subheader("Stock Dashboard Overview")
 
 stock_symbols = PyTickerSymbols().get_all_stocks()
 
-stocks = []
-
-for s in stock_symbols:
-    price = get_price_stock(s["symbol"])
-    stocks.append({ "name": s["name"], "symbol": s["symbol"] , "country": s["country"], "price" : price, "industries": s["industries"] })
+stocks = get_price_stocks(stock_symbols)
 
 st.dataframe(
     stocks,
