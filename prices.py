@@ -50,7 +50,7 @@ def get_price_stock(symbol,default = 0.0):
 
 def get_price_stocks(stocks):
     ret = []
-    symbols = [f'{s["symbol"]}.PA' for s in stocks]
+    symbols = [f'{s["symbol"]}' for s in stocks]
     #st.write(symbols)
     # Download last closing prices
     try:
@@ -68,13 +68,16 @@ def get_price_stocks(stocks):
         if not stock:
             pass
         else:
-            price = df[f'{stock["symbol"]}.PA']
+            try:
+                price = df[f'{stock["symbol"]}'].iloc[-1]
+            except:
+                price = 0.0
 
             ret.append({
                 "name": stock["name"],
                 "symbol": stock["symbol"],
                 "country": stock["country"],
-                "price": price.iloc[-1],
+                "price": price,
                 "industries": stock["industries"],
             })
 
