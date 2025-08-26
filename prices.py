@@ -1,3 +1,5 @@
+import math
+
 import yfinance as yf
 import requests
 from forex_python.converter import CurrencyRates
@@ -25,6 +27,7 @@ YAHOO_SUFFIXES = {
 
     # Americas
     "USA": "",            # no suffix
+    "United States" : "",
     "Canada": ".TO",      # Toronto
     "Brazil": ".SA",      # São Paulo
     "Mexico": ".MX",      # Mexico
@@ -82,25 +85,6 @@ def get_price_stock(symbol,default = 0.0):
     except:
         return default
 
-# def get_price_stocks(stocks):
-#     symbols_sting = []
-#     ret = []
-#
-#     for stock in stocks:
-#         #print(stock)
-#         #st.write(stock)
-#         symbols_sting.append(normalize_symbol(f"{stock['symbol']}-{stock['name']}"))
-#
-#     prices = [0.0 for symbol in symbols_sting]
-#     try:
-#         prices = yf.Ticker(symbols_sting).info['regularMarketPrice']
-#     except:
-#         pass
-#     for s,p in stocks,prices:
-#         ret.append({ "name": s["name"], "symbol": s["symbol"] , "country": s["country"], "price" : p, "industries": s["industries"] })
-#
-#     return ret
-
 def get_price_stocks(stocks):
     ret = []
     symbols = [yahoo_symbol(s['symbol'], s['country']) for s in stocks]
@@ -109,8 +93,6 @@ def get_price_stocks(stocks):
     except Exception as e:
         st.error(f"Download error: {e}")
         df = {}
-
-    st.write(df)
     for stock in stocks:
         if not stock:
             pass
@@ -118,7 +100,7 @@ def get_price_stocks(stocks):
             try:
                 price = df[yahoo_symbol(stock['symbol'],stock['country'])].iloc[-1]
             except:
-                price = 0.0
+                price = math.nan
 
             ret.append({
                 "name": stock["name"],

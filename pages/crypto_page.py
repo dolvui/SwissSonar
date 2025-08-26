@@ -172,3 +172,10 @@ st.dataframe(
     stocks,
     use_container_width=True
 )
+
+stock_options = {
+    f"{row['symbol']} - {row['name']}": row['symbol']
+    for _, row in stocks.iterrows()
+}
+
+selected_display = st.selectbox("Select a stock for analysis", list(stock_options.keys()))
