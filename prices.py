@@ -50,7 +50,7 @@ def get_price_stock(symbol,default = 0.0):
 
 def get_price_stocks(stocks):
     ret = []
-    symbols = [(f'{s["symbol"]}-eklerh') for s in stocks]
+    symbols = [(f'{s["symbol"]}') for s in stocks]
     st.write(symbols)
     # Download last closing prices
     try:
