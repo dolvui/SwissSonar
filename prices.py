@@ -64,15 +64,14 @@ def get_price_stocks(stocks):
         df = {}
 
     st.write(df)
-    print(df)
     for stock in stocks:
-        price = df.get(stock["symbol"], 0.0)
+        price = df.get(f'{stock["symbol"]}.PA', 0.0)
 
         ret.append({
             "name": stock["name"],
             "symbol": stock["symbol"],
             "country": stock["country"],
-            "price": price[-1],
+            "price": price,
             "industries": stock["industries"],
         })
 
