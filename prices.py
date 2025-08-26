@@ -51,13 +51,13 @@ def get_price_stock(symbol,default = 0.0):
 def get_price_stocks(stocks):
     ret = []
     symbols = [normalize_symbol(f'{s["symbol"]}-eklerh') for s in stocks]
-
+    st.write(symbols)
     # Download last closing prices
     try:
         df = yf.Ticker(symbols).info['regularMarketPrice']
         #df = yf.download(symbols, period="1d")["Close"].iloc[-1]
     except Exception as e:
-        print(f"Download error: {e}")
+        st.error(f"Download error: {e}")
         df = {}
 
     st.write(df)
