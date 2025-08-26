@@ -173,9 +173,23 @@ st.dataframe(
     use_container_width=True
 )
 
+search_stock_query = st.text_input("🔍 Search stock by name or symbol").lower()
+
+if search_stock_query:
+    filtered_df_stock = stocks[
+        stocks["name"].str.lower().str.contains(search_stock_query)
+        | stocks["symbol"].str.lower().str.contains(search_stock_query)
+        ]
+else:
+    filtered_df_stock = stocks
+
 stock_options = {
     f"{row['symbol']} - {row['name']}": row['symbol']
-    for _, row in stocks.iterrows()
+    for _, row in filtered_df_stock.iterrows()
 }
 
-selected_display = st.selectbox("Select a stock for analysis", list(stock_options.keys()))
+selected_stock_display = st.selectbox("Select a stock for analysis", list(stock_options.keys()))
+
+selected_stock = stock_options[selected_stock_display]
+
+st.write(selected_stock)
