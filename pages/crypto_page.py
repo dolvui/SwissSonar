@@ -163,15 +163,13 @@ st.divider()
 from pytickersymbols import PyTickerSymbols
 from prices import get_price_stocks
 st.subheader("Stock Dashboard Overview")
+import pandas as pd
 
 stock_symbols = PyTickerSymbols().get_all_stocks()
-
 stocks = get_price_stocks(stock_symbols)
 
-st.dataframe(
-    stocks,
-    use_container_width=True
-)
+# Convert list → DataFrame
+stocks = pd.DataFrame(stocks)
 
 search_stock_query = st.text_input("🔍 Search stock by name or symbol").lower()
 
@@ -179,17 +177,18 @@ if search_stock_query:
     filtered_df_stock = stocks[
         stocks["name"].str.lower().str.contains(search_stock_query)
         | stocks["symbol"].str.lower().str.contains(search_stock_query)
-        ]
+    ]
 else:
     filtered_df_stock = stocks
 
+st.dataframe(stocks, use_container_width=True)
+
 stock_options = {
     f"{row['symbol']} - {row['name']}": row['symbol']
-    for row in filtered_df_stock
+    for _, row in filtered_df_stock.iterrows()
 }
 
 selected_stock_display = st.selectbox("Select a stock for analysis", list(stock_options.keys()))
-
 selected_stock = stock_options[selected_stock_display]
 
 st.write(selected_stock)

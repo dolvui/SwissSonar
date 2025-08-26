@@ -68,6 +68,7 @@ def normalize_symbol(symbol: str) -> str:
         return f"{symbol}.PA"
     return symbol
 
+
 def get_price_cryptocurrency(symbol,default=0.0):
     try:
         url = f"https://api.coingecko.com/api/v3/simple/price?ids={symbol.lower()}&vs_currencies=usd"
@@ -85,6 +86,7 @@ def get_price_stock(symbol,default = 0.0):
     except:
         return default
 
+@st.cache_data(ttl=3600)
 def get_price_stocks(stocks):
     ret = []
     symbols = [yahoo_symbol(s['symbol'], s['country']) for s in stocks]
