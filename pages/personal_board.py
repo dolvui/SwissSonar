@@ -68,7 +68,7 @@ else:
     for rubrick, rubrick_pnl, rubrick_items in rubrick_results:
         rubrick_color = "green" if rubrick_pnl >= 0 else "red"
 
-        with st.expander(f"📂 {rubrick['name']} ({rubrick.get('provider', '?')} )       :{rubrick_color}[{rubrick_pnl:+.2f}]", expanded=False):
+        with st.expander(f"📂 {rubrick['name']} ({rubrick.get('provider', '?')} )       :{rubrick_color}[{rubrick_pnl:+.2f}]", expanded=True):
             # Header row
             col1, col2, col3, col4, col5 = st.columns([2, 2, 2, 2, 1])
             col1.write("**Symbol**")

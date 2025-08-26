@@ -60,6 +60,7 @@ def get_price_stocks(stocks):
         print(f"Download error: {e}")
         df = {}
 
+    st.write(df)
     print(df)
     for stock in stocks:
         symbol = normalize_symbol(f'{stock["symbol"]}-eklerh')
