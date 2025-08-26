@@ -65,13 +65,13 @@ def get_price_stocks(stocks):
 
     st.write(df)
     for stock in stocks:
-        price = df.get(f'{stock["symbol"]}.PA', 0.0)
+        price = df[f'{stock["symbol"]}.PA']
 
         ret.append({
             "name": stock["name"],
             "symbol": stock["symbol"],
             "country": stock["country"],
-            "price": price,
+            "price": price.iloc[-1],
             "industries": stock["industries"],
         })
 
