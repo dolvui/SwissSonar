@@ -57,7 +57,7 @@ def get_price_stocks(stocks):
         #df = yf.Ticker(symbols)
         #st.write(df)
         #.info['regularMarketPrice']
-        df = yf.download(" ".join(symbols))
+        df = yf.download(" ".join(symbols))['Close']
         st.write(df)
     except Exception as e:
         st.error(f"Download error: {e}")
@@ -66,7 +66,7 @@ def get_price_stocks(stocks):
     st.write(df)
     print(df)
     for stock in stocks:
-        price = df.get(stock["name"], 0.0)
+        price = df.get(stock["symbol"], 0.0)
 
         ret.append({
             "name": stock["name"],
