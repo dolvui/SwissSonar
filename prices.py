@@ -48,28 +48,34 @@ def get_price_stock(symbol,default = 0.0):
 #
 #     return ret
 
+
+def country_comply(symbol, country):
+    suffix_map = {
+        "France": ".PA",
+        "Germany": ".DE",
+        "Sweden": ".ST",
+        "Finland": ".HE",
+        "Russia": ".ME",
+        "Argentina": ".BA",
+        "USA": "",  # no suffix
+    }
+    return f"{symbol}{suffix_map.get(country, '')}"
+
 def get_price_stocks(stocks):
     ret = []
-    symbols = [f'{s["symbol"]}' for s in stocks]
-    #st.write(symbols)
-    # Download last closing prices
+    symbols = [country_comply(s['symbol'], s['country']) for s in stocks]
     try:
-        #df = yf.Ticker(symbols)
-        #st.write(df)
-        #.info['regularMarketPrice']
         df = yf.download(" ".join(symbols))['Close']
-        #st.write(df)
     except Exception as e:
         st.error(f"Download error: {e}")
         df = {}
 
-    st.write(df)
     for stock in stocks:
         if not stock:
             pass
         else:
             try:
-                price = df[f'{stock["symbol"]}'].iloc[-1]
+                price = df[country_comply(stock['symbol'],stock['country'])].iloc[-1]
             except:
                 price = 0.0
 
