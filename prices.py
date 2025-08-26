@@ -72,7 +72,7 @@ def get_price_stocks(stocks):
             "name": stock["name"],
             "symbol": stock["symbol"],
             "country": stock["country"],
-            "price": price,
+            "price": price[-1],
             "industries": stock["industries"],
         })
 
