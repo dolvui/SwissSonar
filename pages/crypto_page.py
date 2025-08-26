@@ -191,6 +191,6 @@ stock_options = {
 selected_stock_display = st.selectbox("Select a stock for analysis", list(stock_options.keys()))
 selected_stock = stock_options[selected_stock_display]
 
-if st.button("🔎 Analyse"):
+if st.button("🔎 Analyse",key="stock_analysis"):
     _,report = analyse_stock(selected_stock)
     st.write(report)
