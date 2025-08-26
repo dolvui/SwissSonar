@@ -161,7 +161,7 @@ if st.button("🔎 Analyse"):
 st.divider()
 
 from pytickersymbols import PyTickerSymbols
-from prices import get_price_stocks
+from prices import get_price_stocks,analyse_stock
 st.subheader("Stock Dashboard Overview")
 import pandas as pd
 
@@ -191,4 +191,6 @@ stock_options = {
 selected_stock_display = st.selectbox("Select a stock for analysis", list(stock_options.keys()))
 selected_stock = stock_options[selected_stock_display]
 
-st.write(selected_stock)
+if st.button("🔎 Analyse"):
+    _,report = analyse_stock(selected_stock)
+    st.write(report)
