@@ -86,7 +86,7 @@ def get_price_stocks(stocks):
                 "price": price,
                 "industries": stock["industries"],
             })
-
+    st.write(ret)
     return ret
 
 def get_price_forex(symbol,buy_price):
