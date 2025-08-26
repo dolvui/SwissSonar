@@ -50,7 +50,7 @@ def get_price_stock(symbol,default = 0.0):
 
 def get_price_stocks(stocks):
     ret = []
-    symbols = [(f'{s["symbol"]}') for s in stocks]
+    symbols = [(f'{s["symbol"]}.PA') for s in stocks]
     #st.write(symbols)
     # Download last closing prices
     try:
@@ -58,7 +58,7 @@ def get_price_stocks(stocks):
         #st.write(df)
         #.info['regularMarketPrice']
         df = yf.download(" ".join(symbols))['Close']
-        st.write(df)
+        #st.write(df)
     except Exception as e:
         st.error(f"Download error: {e}")
         df = {}
