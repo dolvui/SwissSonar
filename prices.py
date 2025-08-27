@@ -102,22 +102,16 @@ def get_price_stocks(stocks):
         if not stock:
             pass
         else:
-            try:
-                price = df[yahoo_symbol(stock['symbol'],stock['country'])].iloc[-1]
-            except:
-                price = math.nan
-
             ret.append({
                 "name": stock["name"],
                 "symbol": stock["symbol"],
                 "country": stock["country"],
-                "price": price,
-                #"industries": stock["industries"],
             })
     ret_stocks = pd.DataFrame(ret)
     scores = []
     signals = []
     comments = []
+    prices = []
     for _, stock in ret_stocks.iterrows():
         try:
             obj, report = analyse_stock((stock['symbol'], stock['country']))
@@ -135,9 +129,15 @@ def get_price_stocks(stocks):
                 comments.append(obj["comment"])
             else:
                 comments.append(0)
+
+            if obj and obj["latest_price"]:
+                prices.append(obj["latest_price"])
+            else:
+                prices.append(0)
         except Exception as e:
             scores.append(0)
 
+    ret_stocks['price'] = prices
     ret_stocks['score'] = scores
     ret_stocks['signal'] = signals
     ret_stocks['comment'] = comments
@@ -162,7 +162,6 @@ def analyse_stock(row, period="12mo", interval="1h"):
         df = yf.download(symbol, period=period, interval=interval)
         if df.empty:
             return None, f"No data for {symbol}"
-
         df = df.dropna()
         prices = df["Close"]
         #volumes = df["Volume"]
