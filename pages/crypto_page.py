@@ -172,7 +172,7 @@ stocks = get_price_stocks(stock_symbols)
 stocks = pd.DataFrame(stocks)
 
 scores = []
-for _,stock in stocks:
+for _,stock in stocks.iterrows():
     obj, report = analyse_stock(stock['symbol'],stock['country'])
     scores.append(obj['signal_score'])
 stocks['score'] = scores
