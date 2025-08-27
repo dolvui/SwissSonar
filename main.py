@@ -9,8 +9,8 @@ if __name__ == '__main__':
     parser.add_argument('--tickers', metavar='string', required=False)
 
     args = parser.parse_args()
-    from sqliteModels import init_db
-    init_db()
+    #from sqliteModels import init_db
+    #init_db()
     if args.refresh_coins:
         from scripts.daily_refresh import refresh_coins
         refresh_coins()

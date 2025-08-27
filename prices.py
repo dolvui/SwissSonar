@@ -123,18 +123,16 @@ def get_price_forex(symbol,buy_price):
         return buy_price
 
 def analyse_stock(row, period="6mo", interval="1d"):
-    symbol,country = row
-    symbol = yahoo_symbol(symbol,country)
+    symbol, country = row
+    symbol = yahoo_symbol(symbol, country)
     st.info(f"Starting analysis of {symbol}")
     try:
         df = yf.download(symbol, period=period, interval=interval)
         if df.empty:
             return None, f"No data for {symbol}"
 
-        # Ensure no NaN
+        # Ensure no NaN rows
         df = df.dropna()
-
-        # Price series
         prices = df['Close']
         volumes = df['Volume']
 
@@ -157,45 +155,47 @@ def analyse_stock(row, period="6mo", interval="1d"):
         rsi = 100 - (100 / (1 + rs))
 
         # Linear regression slope (trend strength)
-        x = np.arange(len(prices))
-        st.write(x)
+        slope_pct, r2 = 0.0, 0.0
         try:
-            slope, intercept, r_value, p_value, std_err = linregress(x, prices)
+            x = np.arange(len(prices))
+            slope, intercept, r_value, _, _ = linregress(x, prices)
             slope_pct = slope / prices.iloc[0] * 100
             r2 = r_value**2
         except:
-            slope_pct = 0.5
-            r2 = 0.5
+            pass
+
         # Volatility (% annualized)
         daily_ret = prices.pct_change().dropna()
-        volatility = np.std(daily_ret) * np.sqrt(252) * 100
+        volatility = np.std(daily_ret) * np.sqrt(252) * 100 if not daily_ret.empty else 0.0
 
         # --- Signal Scoring ---
         score = 0
 
-        # Trend following
-        if ma20.iloc[-1] > ma50.iloc[-1] > ma200.iloc[-1]:
-            score += 20  # bullish trend
-        elif ma20.iloc[-1] < ma50.iloc[-1] < ma200.iloc[-1]:
-            score -= 20  # bearish trend
+        ma20_last = ma20.iloc[-1] if not np.isnan(ma20.iloc[-1]) else None
+        ma50_last = ma50.iloc[-1] if not np.isnan(ma50.iloc[-1]) else None
+        ma200_last = ma200.iloc[-1] if not np.isnan(ma200.iloc[-1]) else None
 
-        # Bollinger squeeze breakout
-        if prices.iloc[-1] > upper_band.iloc[-1]:
-            score += 15
-        elif prices.iloc[-1] < lower_band.iloc[-1]:
-            score -= 15
+        if ma20_last and ma50_last and ma200_last:
+            if ma20_last > ma50_last > ma200_last:
+                score += 20  # bullish trend
+            elif ma20_last < ma50_last < ma200_last:
+                score -= 20  # bearish trend
 
-        # RSI
-        if rsi.iloc[-1] > 70:
+        if not np.isnan(upper_band.iloc[-1]) and not np.isnan(lower_band.iloc[-1]):
+            if prices.iloc[-1] > upper_band.iloc[-1]:
+                score += 15
+            elif prices.iloc[-1] < lower_band.iloc[-1]:
+                score -= 15
+
+        rsi_last = rsi.iloc[-1] if not np.isnan(rsi.iloc[-1]) else 50
+        if rsi_last > 70:
             score -= 10  # overbought
-        elif rsi.iloc[-1] < 30:
+        elif rsi_last < 30:
             score += 10  # oversold
 
-        # Volatility
         if volatility > 40:
-            score -= 5  # risky
+            score -= 5  # high risk
 
-        # Trend slope
         if slope_pct > 0.05 and r2 > 0.5:
             score += 10
         elif slope_pct < -0.05 and r2 > 0.5:
@@ -213,7 +213,7 @@ def analyse_stock(row, period="6mo", interval="1d"):
         else:
             signal = "🔍 Neutral / Sideways"
 
-        # --- Comment ---
+        # --- Comments ---
         comment = []
         if score > 0:
             comment.append("Uptrend bias")
@@ -222,9 +222,9 @@ def analyse_stock(row, period="6mo", interval="1d"):
         else:
             comment.append("No clear trend")
 
-        if rsi.iloc[-1] > 70:
+        if rsi_last > 70:
             comment.append("Overbought")
-        elif rsi.iloc[-1] < 30:
+        elif rsi_last < 30:
             comment.append("Oversold")
 
         if volatility > 40:
@@ -236,7 +236,7 @@ def analyse_stock(row, period="6mo", interval="1d"):
             "slope_pct": round(slope_pct, 3),
             "r2": round(r2, 2),
             "volatility_pct": round(volatility, 2),
-            "rsi": round(rsi.iloc[-1], 2),
+            "rsi": round(rsi_last, 2),
             "signal_score": score,
             "signal": signal,
             "comment": ", ".join(comment)
@@ -247,7 +247,7 @@ def analyse_stock(row, period="6mo", interval="1d"):
         Latest price: {round(prices.iloc[-1], 2)}  
         Trend slope: {round(slope_pct, 3)}% (R²={round(r2, 2)})  
         Volatility: {round(volatility, 2)}% annualized  
-        RSI(14): {round(rsi.iloc[-1], 2)}  
+        RSI(14): {round(rsi_last, 2)}  
         Signal Score: {score}  
         Signal: {signal}  
         Comment: {", ".join(comment)}
