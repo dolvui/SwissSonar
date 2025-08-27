@@ -145,7 +145,9 @@ def analyse_stock(row, period="12mo", interval="1h"):
         ma50 = prices.rolling(50).mean() if len(prices) >= 50 else None
         ma200 = prices.rolling(200).mean() if len(prices) >= 200 else None
 
-        st.write(prices.rolling(20))
+        st.write(prices.rolling(20).mean())
+        st.write(prices.rolling(50).mean())
+        st.write(prices.rolling(200).mean())
 
         # Bollinger Bands (20d, 2 std)
         if len(prices) >= 20:
