@@ -174,7 +174,10 @@ stocks = pd.DataFrame(stocks)
 scores = []
 for _,stock in stocks.iterrows():
     obj, report = analyse_stock((stock['symbol'],stock['country']))
-    scores.append(obj['signal_score'])
+    if obj['signal_score']:
+        scores.append(obj['signal_score'])
+    else:
+        scores.append(0)
 stocks['score'] = scores
 
 search_stock_query = st.text_input("🔍 Search stock by name or symbol").lower()

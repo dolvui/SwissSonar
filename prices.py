@@ -138,7 +138,7 @@ def analyse_stock(row, period="12mo", interval="1h"):
         df = df.dropna()
         prices = df["Close"]
         #volumes = df["Volume"]
-        st.info(f"process symbol : {symbol} with {len(prices)} values")
+        #st.info(f"process symbol : {symbol} with {len(prices)} values")
         # --- Indicators ---
         # Moving averages (with guards)
         ma20 = prices.rolling(20).mean().dropna()
