@@ -184,36 +184,36 @@ def analyse_stock(row, period="12mo", interval="1h"):
         score = 0
 
         # Trend following
-        if ma20 is not None and ma50 is not None and ma200 is not None:
-            if ma20.iloc[-1] > ma50.iloc[-1] > ma200.iloc[-1]:
-                score += 20
-            elif ma20.iloc[-1] < ma50.iloc[-1] < ma200.iloc[-1]:
-                score -= 20
-
-        # Bollinger breakout
-        if upper_band is not None and lower_band is not None:
-            if prices.iloc[-1] > upper_band.iloc[-1]:
-                score += 15
-            elif prices.iloc[-1] < lower_band.iloc[-1]:
-                score -= 15
-
-        # RSI
-        if rsi_val is not None:
-            if rsi_val > 70:
-                score -= 10  # overbought
-            elif rsi_val < 30:
-                score += 10  # oversold
-
-        # Volatility
-        if volatility > 40:
-            score -= 5
-
-        # Trend slope
-        if slope_pct > 0.05 and r2 > 0.5:
-            score += 10
-        elif slope_pct < -0.05 and r2 > 0.5:
-            score -= 10
-
+        # if ma20 is not None and ma50 is not None and ma200 is not None:
+        #     if ma20.iloc[-1] > ma50.iloc[-1] > ma200.iloc[-1]:
+        #         score += 20
+        #     elif ma20.iloc[-1] < ma50.iloc[-1] < ma200.iloc[-1]:
+        #         score -= 20
+        #
+        # # Bollinger breakout
+        # if upper_band is not None and lower_band is not None:
+        #     if prices.iloc[-1] > upper_band.iloc[-1]:
+        #         score += 15
+        #     elif prices.iloc[-1] < lower_band.iloc[-1]:
+        #         score -= 15
+        #
+        # # RSI
+        # if rsi_val is not None:
+        #     if rsi_val > 70:
+        #         score -= 10  # overbought
+        #     elif rsi_val < 30:
+        #         score += 10  # oversold
+        #
+        # # Volatility
+        # if volatility > 40:
+        #     score -= 5
+        #
+        # # Trend slope
+        # if slope_pct > 0.05 and r2 > 0.5:
+        #     score += 10
+        # elif slope_pct < -0.05 and r2 > 0.5:
+        #     score -= 10
+        #
         # --- Classification ---
         if score >= 25:
             signal = "🚀 Strong Bullish"
