@@ -122,6 +122,8 @@ def get_price_forex(symbol,buy_price):
         return buy_price
 
 def analyse_stock(symbol, period="6mo", interval="1d"):
+    #yahoo_symbol(symbol.split("-")[0].replace(" ", ""))
+    st.info(f"Starting analysis of {symbol}")
     try:
         df = yf.download(symbol, period=period, interval=interval)
         if df.empty:
