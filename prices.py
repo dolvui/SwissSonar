@@ -182,7 +182,7 @@ def analyse_stock(row, period="12mo", interval="1h"):
 
         # Trend following
         if ma20 is not None and ma50 is not None and ma200 is not None:
-            st.write(f"with iloc ->  20 : {ma20.iloc[-1][1]} , 50 : {ma50.iloc[-1][0]} , 200 : {ma200.iloc[-1][2]}")
+            st.write(f"with iloc ->  20 : {ma20.iloc[-1][0]} , 50 : {ma50.iloc[-1][0]} , 200 : {ma200.iloc[-1][0]}")
             if ma20.iloc[-1] > ma50.iloc[-1] > ma200.iloc[-1]:
                 score += 20
             elif ma20.iloc[-1] < ma50.iloc[-1] < ma200.iloc[-1]:
