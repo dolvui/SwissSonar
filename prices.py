@@ -112,10 +112,12 @@ def get_price_stocks(stocks):
                 "symbol": stock["symbol"],
                 "country": stock["country"],
                 "price": price,
-                "industries": stock["industries"],
+                #"industries": stock["industries"],
             })
     ret_stocks = pd.DataFrame(ret)
     scores = []
+    signals = []
+    comments = []
     for _, stock in ret_stocks.iterrows():
         try:
             obj, report = analyse_stock((stock['symbol'], stock['country']))
@@ -123,10 +125,22 @@ def get_price_stocks(stocks):
                 scores.append(obj['signal_score'])
             else:
                 scores.append(0)
+
+            if obj and obj["signal"]:
+                signals.append(obj["signal"])
+            else:
+                signals.append(0)
+
+            if obj and obj["comment"]:
+                comments.append(obj["comment"])
+            else:
+                comments.append(0)
         except Exception as e:
             scores.append(0)
 
     ret_stocks['score'] = scores
+    ret_stocks['signal'] = signals
+    ret_stocks['comment'] = comments
     return ret_stocks
 
 def get_price_forex(symbol,buy_price):
