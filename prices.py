@@ -4,6 +4,7 @@ from scipy.stats import linregress
 import yfinance as yf
 import requests
 from forex_python.converter import CurrencyRates
+import pandas as pd
 
 # Yahoo Finance stock symbol suffixes by country/exchange
 YAHOO_SUFFIXES = {
@@ -113,7 +114,20 @@ def get_price_stocks(stocks):
                 "price": price,
                 "industries": stock["industries"],
             })
-    return ret
+    ret_stocks = pd.DataFrame(ret)
+    scores = []
+    for _, stock in ret_stocks.iterrows():
+        try:
+            obj, report = analyse_stock((stock['symbol'], stock['country']))
+            if obj and obj['signal_score']:
+                scores.append(obj['signal_score'])
+            else:
+                scores.append(0)
+        except Exception as e:
+            scores.append(0)
+
+    ret_stocks['score'] = scores
+    return ret_stocks
 
 def get_price_forex(symbol,buy_price):
     try:
