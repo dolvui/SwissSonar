@@ -48,6 +48,7 @@ YAHOO_SUFFIXES = {
 
     # Others
     "Russia": ".ME",      # Moscow Exchange
+    "Russia Federation": ".ME",      # Moscow Exchange
     "South Africa": ".JO" # Johannesburg
 }
 
@@ -121,8 +122,9 @@ def get_price_forex(symbol,buy_price):
         st.error('forex seems down !')
         return buy_price
 
-def analyse_stock(symbol, period="6mo", interval="1d"):
-    #yahoo_symbol(symbol.split("-")[0].replace(" ", ""))
+def analyse_stock(row, period="6mo", interval="1d"):
+    symbol,country = row
+    symbol = yahoo_symbol(symbol,country)
     st.info(f"Starting analysis of {symbol}")
     try:
         df = yf.download(symbol, period=period, interval=interval)

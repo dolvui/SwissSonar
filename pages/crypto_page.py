@@ -181,10 +181,10 @@ if search_stock_query:
 else:
     filtered_df_stock = stocks
 
-st.dataframe(stocks, use_container_width=True)
+st.dataframe(filtered_df_stock, use_container_width=True)
 
 stock_options = {
-    f"{row['symbol']} - {row['name']}": row['symbol']
+    f"{row['symbol']} - {row['name']}": (row['symbol'],row["country"])
     for _, row in filtered_df_stock.iterrows()
 }
 
