@@ -284,5 +284,5 @@ def analyse_stock(row, period="12mo", interval="1h"):
         import sys
         exc_type, exc_obj, exc_traceback = sys.exc_info()
         line_number = exc_traceback.tb_lineno
-        st.error(f"Exception occurred on line {line_number}")
+        #st.error(f"Exception occurred on line {line_number}")
         return None, f"Error analysing {symbol}: {e}"
