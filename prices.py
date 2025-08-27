@@ -138,14 +138,17 @@ def analyse_stock(row, period="6mo", interval="1d"):
 
         # --- Indicators ---
         # Moving averages
-        ma20 = prices.rolling(20).mean()
-        ma50 = prices.rolling(50).mean()
-        ma200 = prices.rolling(200).mean()
+        ma20 = prices.rolling(20).mean() if len(prices) >= 20 else None
+        ma50 = prices.rolling(50).mean() if len(prices) >= 50 else None
+        ma200 = prices.rolling(200).mean() if len(prices) >= 200 else None
 
         # Bollinger Bands (20-day, 2 std)
-        std20 = prices.rolling(20).std()
-        upper_band = ma20 + (2 * std20)
-        lower_band = ma20 - (2 * std20)
+        if len(prices) >= 20:
+            std20 = prices.rolling(20).std()
+            upper_band = ma20 + (2 * std20)
+            lower_band = ma20 - (2 * std20)
+        else:
+            upper_band, lower_band = None, None
 
         # Relative Strength Index (RSI)
         delta = prices.diff()
@@ -184,7 +187,20 @@ def analyse_stock(row, period="6mo", interval="1d"):
         #     elif ma20_last < ma50_last < ma200_last:
         #         score -= 20  # bearish trend
 
-        if not np.isnan(upper_band.iloc[-1]) and not np.isnan(lower_band.iloc[-1]):
+        # if not np.isnan(upper_band.iloc[-1]) and not np.isnan(lower_band.iloc[-1]):
+        #     if prices.iloc[-1] > upper_band.iloc[-1]:
+        #         score += 15
+        #     elif prices.iloc[-1] < lower_band.iloc[-1]:
+        #         score -= 15
+
+        if ma20 is not None and ma50 is not None and ma200 is not None:
+            if ma20.iloc[-1] > ma50.iloc[-1] > ma200.iloc[-1]:
+                score += 20
+            elif ma20.iloc[-1] < ma50.iloc[-1] < ma200.iloc[-1]:
+                score -= 20
+
+        # Bollinger bands
+        if upper_band is not None and lower_band is not None:
             if prices.iloc[-1] > upper_band.iloc[-1]:
                 score += 15
             elif prices.iloc[-1] < lower_band.iloc[-1]:
