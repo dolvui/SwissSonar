@@ -174,7 +174,7 @@ stocks = pd.DataFrame(stocks)
 scores = []
 for _,stock in stocks.iterrows():
     obj, report = analyse_stock((stock['symbol'],stock['country']))
-    if obj['signal_score']:
+    if obj and obj['signal_score']:
         scores.append(obj['signal_score'])
     else:
         scores.append(0)
