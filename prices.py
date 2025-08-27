@@ -167,11 +167,14 @@ def analyse_stock(row, period="12mo", interval="1h"):
 
         # Linear regression slope
         slope_pct, r2 = 0.0, 0.0
-        if len(prices) > 5:  # need a few points at least
-            x = np.arange(len(prices))
-            slope, intercept, r_value, _, _ = linregress(x, prices)
-            slope_pct = slope / prices.iloc[0] * 100
-            r2 = r_value**2
+        try:
+            if len(prices) > 5:
+                x = np.arange(len(prices))
+                slope, intercept, r_value, _, _ = linregress(x, prices)
+                slope_pct = slope / prices.iloc[0] * 100
+                r2 = r_value**2
+        except:
+            pass
 
         # Volatility (annualized %)
         daily_ret = prices.pct_change().dropna()
