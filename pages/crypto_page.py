@@ -180,6 +180,29 @@ if search_stock_query:
 else:
     filtered_df_stock = stocks
 
+# --- Country filter ---
+available_countries = sorted(filtered_df_stock["country"].dropna().unique())
+selected_countries = st.multiselect(
+    "🌍 Filter by Country", available_countries, default=available_countries
+)
+filtered_df_stock = filtered_df_stock[filtered_df_stock["country"].isin(selected_countries)]
+
+# --- Signal filter ---
+if "signal" in filtered_df_stock.columns:
+    available_signals = sorted(filtered_df_stock["signal"].dropna().unique())
+    selected_signals = st.multiselect(
+        "📈 Filter by Signal", available_signals, default=available_signals
+    )
+    filtered_df_stock = filtered_df_stock[filtered_df_stock["signal"].isin(selected_signals)]
+
+# --- Comment filter ---
+if "comment" in filtered_df_stock.columns:
+    available_comments = sorted(filtered_df_stock["comment"].dropna().unique())
+    selected_comments = st.multiselect(
+        "💬 Filter by Comment", available_comments, default=available_comments
+    )
+    filtered_df_stock = filtered_df_stock[filtered_df_stock["comment"].isin(selected_comments)]
+
 st.dataframe(filtered_df_stock, use_container_width=True)
 
 stock_options = {
