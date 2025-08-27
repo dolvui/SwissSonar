@@ -122,27 +122,30 @@ def get_price_forex(symbol,buy_price):
         st.error('forex seems down !')
         return buy_price
 
-def analyse_stock(row, period="12mo", interval="1d"):
+import numpy as np
+import yfinance as yf
+from scipy.stats import linregress
+
+def analyse_stock(row, period="6mo", interval="1d"):
     symbol, country = row
-    symbol = yahoo_symbol(symbol, country)
-    st.info(f"Starting analysis of {symbol}")
+    symbol = yahoo_symbol(symbol, country)  # your function to normalize ticker
+
     try:
         df = yf.download(symbol, period=period, interval=interval)
         if df.empty:
             return None, f"No data for {symbol}"
 
-        # Ensure no NaN rows
         df = df.dropna()
-        prices = df['Close']
-        volumes = df['Volume']
+        prices = df["Close"]
+        volumes = df["Volume"]
 
         # --- Indicators ---
-        # Moving averages
+        # Moving averages (with guards)
         ma20 = prices.rolling(20).mean() if len(prices) >= 20 else None
         ma50 = prices.rolling(50).mean() if len(prices) >= 50 else None
         ma200 = prices.rolling(200).mean() if len(prices) >= 200 else None
 
-        # Bollinger Bands (20-day, 2 std)
+        # Bollinger Bands (20d, 2 std)
         if len(prices) >= 20:
             std20 = prices.rolling(20).std()
             upper_band = ma20 + (2 * std20)
@@ -150,74 +153,58 @@ def analyse_stock(row, period="12mo", interval="1d"):
         else:
             upper_band, lower_band = None, None
 
-        # Relative Strength Index (RSI)
-        delta = prices.diff()
-        gain = (delta.where(delta > 0, 0)).rolling(14).mean()
-        loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
-        rs = gain / (loss + 1e-9)
-        rsi = 100 - (100 / (1 + rs))
+        # RSI (14d)
+        if len(prices) >= 14:
+            delta = prices.diff()
+            gain = (delta.where(delta > 0, 0)).rolling(14).mean()
+            loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
+            rs = gain / (loss + 1e-9)
+            rsi = 100 - (100 / (1 + rs))
+            rsi_val = float(rsi.iloc[-1])
+        else:
+            rsi_val, rsi = None, None
 
-        # Linear regression slope (trend strength)
+        # Linear regression slope
         slope_pct, r2 = 0.0, 0.0
-        try:
+        if len(prices) > 5:  # need a few points at least
             x = np.arange(len(prices))
             slope, intercept, r_value, _, _ = linregress(x, prices)
             slope_pct = slope / prices.iloc[0] * 100
             r2 = r_value**2
-        except:
-            pass
 
-        # Volatility (% annualized)
+        # Volatility (annualized %)
         daily_ret = prices.pct_change().dropna()
         volatility = np.std(daily_ret) * np.sqrt(252) * 100 if not daily_ret.empty else 0.0
 
-        # --- Signal Scoring ---
+        # --- Scoring ---
         score = 0
 
-        print(ma20)
-        print(ma20)
-        print(ma200)
-        st.write(ma20)
-        st.write(ma50)
-        st.write(ma200)
-        # ma20_last = ma20.iloc[-1] if not np.isnan(ma20.iloc[-1]) else None
-        # ma50_last = ma50.iloc[-1] if not np.isnan(ma50.iloc[-1]) else None
-        # ma200_last = ma200.iloc[-1] if not np.isnan(ma200.iloc[-1]) else None
-        #
-        # if ma20_last and ma50_last and ma200_last:
-        #     if ma20_last > ma50_last > ma200_last:
-        #         score += 20  # bullish trend
-        #     elif ma20_last < ma50_last < ma200_last:
-        #         score -= 20  # bearish trend
-
-        # if not np.isnan(upper_band.iloc[-1]) and not np.isnan(lower_band.iloc[-1]):
-        #     if prices.iloc[-1] > upper_band.iloc[-1]:
-        #         score += 15
-        #     elif prices.iloc[-1] < lower_band.iloc[-1]:
-        #         score -= 15
-
+        # Trend following
         if ma20 is not None and ma50 is not None and ma200 is not None:
             if ma20.iloc[-1] > ma50.iloc[-1] > ma200.iloc[-1]:
                 score += 20
             elif ma20.iloc[-1] < ma50.iloc[-1] < ma200.iloc[-1]:
                 score -= 20
 
-        # Bollinger bands
+        # Bollinger breakout
         if upper_band is not None and lower_band is not None:
             if prices.iloc[-1] > upper_band.iloc[-1]:
                 score += 15
             elif prices.iloc[-1] < lower_band.iloc[-1]:
                 score -= 15
 
-        rsi_last = rsi.iloc[-1] if not np.isnan(rsi.iloc[-1]) else 50
-        if rsi_last > 70:
-            score -= 10  # overbought
-        elif rsi_last < 30:
-            score += 10  # oversold
+        # RSI
+        if rsi_val is not None:
+            if rsi_val > 70:
+                score -= 10  # overbought
+            elif rsi_val < 30:
+                score += 10  # oversold
 
+        # Volatility
         if volatility > 40:
-            score -= 5  # high risk
+            score -= 5
 
+        # Trend slope
         if slope_pct > 0.05 and r2 > 0.5:
             score += 10
         elif slope_pct < -0.05 and r2 > 0.5:
@@ -235,7 +222,7 @@ def analyse_stock(row, period="12mo", interval="1d"):
         else:
             signal = "🔍 Neutral / Sideways"
 
-        # --- Comments ---
+        # --- Comment ---
         comment = []
         if score > 0:
             comment.append("Uptrend bias")
@@ -244,10 +231,11 @@ def analyse_stock(row, period="12mo", interval="1d"):
         else:
             comment.append("No clear trend")
 
-        if rsi_last > 70:
-            comment.append("Overbought")
-        elif rsi_last < 30:
-            comment.append("Oversold")
+        if rsi_val is not None:
+            if rsi_val > 70:
+                comment.append("Overbought")
+            elif rsi_val < 30:
+                comment.append("Oversold")
 
         if volatility > 40:
             comment.append("High volatility")
@@ -258,10 +246,10 @@ def analyse_stock(row, period="12mo", interval="1d"):
             "slope_pct": round(slope_pct, 3),
             "r2": round(r2, 2),
             "volatility_pct": round(volatility, 2),
-            "rsi": round(rsi_last, 2),
+            "rsi": round(rsi_val, 2) if rsi_val else None,
             "signal_score": score,
             "signal": signal,
-            "comment": ", ".join(comment)
+            "comment": ", ".join(comment),
         }
 
         report = f"""
@@ -269,7 +257,7 @@ def analyse_stock(row, period="12mo", interval="1d"):
         Latest price: {round(prices.iloc[-1], 2)}  
         Trend slope: {round(slope_pct, 3)}% (R²={round(r2, 2)})  
         Volatility: {round(volatility, 2)}% annualized  
-        RSI(14): {round(rsi_last, 2)}  
+        RSI(14): {round(rsi_val, 2) if rsi_val else "N/A"}  
         Signal Score: {score}  
         Signal: {signal}  
         Comment: {", ".join(comment)}
