@@ -137,8 +137,10 @@ def analyse_stock(row, period="6mo", interval="1d"):
 
         df = df.dropna()
         prices = df["Close"]
-        volumes = df["Volume"]
+        #volumes = df["Volume"]
 
+        st.write(prices)
+        return None
         # --- Indicators ---
         # Moving averages (with guards)
         ma20 = prices.rolling(20).mean() if len(prices) >= 20 else None
