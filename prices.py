@@ -206,11 +206,11 @@ def analyse_stock(row, period="6mo", interval="1d"):
         #     elif prices.iloc[-1] < lower_band.iloc[-1]:
         #         score -= 15
 
-        rsi_last = rsi.iloc[-1] if not np.isnan(rsi.iloc[-1]) else 50
-        if rsi_last > 70:
-            score -= 10  # overbought
-        elif rsi_last < 30:
-            score += 10  # oversold
+        # rsi_last = rsi.iloc[-1] if not np.isnan(rsi.iloc[-1]) else 50
+        # if rsi_last > 70:
+        #     score -= 10  # overbought
+        # elif rsi_last < 30:
+        #     score += 10  # oversold
 
         if volatility > 40:
             score -= 5  # high risk
