@@ -136,6 +136,9 @@ def analyse_stock(row, period="6mo", interval="1d"):
         prices = df['Close']
         volumes = df['Volume']
 
+        st.write(df)
+        st.write(prices)
+
         # --- Indicators ---
         # Moving averages
         ma20 = prices.rolling(20).mean()
