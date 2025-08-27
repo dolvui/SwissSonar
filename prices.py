@@ -174,6 +174,9 @@ def analyse_stock(row, period="12mo", interval="1d"):
         # --- Signal Scoring ---
         score = 0
 
+        print(ma20)
+        print(ma20)
+        print(ma200)
         st.write(ma20)
         st.write(ma50)
         st.write(ma200)
@@ -200,17 +203,17 @@ def analyse_stock(row, period="12mo", interval="1d"):
                 score -= 20
 
         # Bollinger bands
-        # if upper_band is not None and lower_band is not None:
-        #     if prices.iloc[-1] > upper_band.iloc[-1]:
-        #         score += 15
-        #     elif prices.iloc[-1] < lower_band.iloc[-1]:
-        #         score -= 15
+        if upper_band is not None and lower_band is not None:
+            if prices.iloc[-1] > upper_band.iloc[-1]:
+                score += 15
+            elif prices.iloc[-1] < lower_band.iloc[-1]:
+                score -= 15
 
-        # rsi_last = rsi.iloc[-1] if not np.isnan(rsi.iloc[-1]) else 50
-        # if rsi_last > 70:
-        #     score -= 10  # overbought
-        # elif rsi_last < 30:
-        #     score += 10  # oversold
+        rsi_last = rsi.iloc[-1] if not np.isnan(rsi.iloc[-1]) else 50
+        if rsi_last > 70:
+            score -= 10  # overbought
+        elif rsi_last < 30:
+            score += 10  # oversold
 
         if volatility > 40:
             score -= 5  # high risk
