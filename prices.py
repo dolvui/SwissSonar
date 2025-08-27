@@ -136,9 +136,6 @@ def analyse_stock(row, period="6mo", interval="1d"):
         prices = df['Close']
         volumes = df['Volume']
 
-        st.write(df)
-        st.write(prices)
-
         # --- Indicators ---
         # Moving averages
         ma20 = prices.rolling(20).mean()
@@ -174,15 +171,18 @@ def analyse_stock(row, period="6mo", interval="1d"):
         # --- Signal Scoring ---
         score = 0
 
-        ma20_last = ma20.iloc[-1] if not np.isnan(ma20.iloc[-1]) else None
-        ma50_last = ma50.iloc[-1] if not np.isnan(ma50.iloc[-1]) else None
-        ma200_last = ma200.iloc[-1] if not np.isnan(ma200.iloc[-1]) else None
-
-        if ma20_last and ma50_last and ma200_last:
-            if ma20_last > ma50_last > ma200_last:
-                score += 20  # bullish trend
-            elif ma20_last < ma50_last < ma200_last:
-                score -= 20  # bearish trend
+        st.write(ma20)
+        st.write(ma50)
+        st.write(ma200)
+        # ma20_last = ma20.iloc[-1] if not np.isnan(ma20.iloc[-1]) else None
+        # ma50_last = ma50.iloc[-1] if not np.isnan(ma50.iloc[-1]) else None
+        # ma200_last = ma200.iloc[-1] if not np.isnan(ma200.iloc[-1]) else None
+        #
+        # if ma20_last and ma50_last and ma200_last:
+        #     if ma20_last > ma50_last > ma200_last:
+        #         score += 20  # bullish trend
+        #     elif ma20_last < ma50_last < ma200_last:
+        #         score -= 20  # bearish trend
 
         if not np.isnan(upper_band.iloc[-1]) and not np.isnan(lower_band.iloc[-1]):
             if prices.iloc[-1] > upper_band.iloc[-1]:
