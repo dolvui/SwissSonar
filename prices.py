@@ -141,21 +141,15 @@ def analyse_stock(row, period="12mo", interval="1h"):
         st.info(f"process symbol : {symbol} with {len(prices)} values")
         # --- Indicators ---
         # Moving averages (with guards)
-        ma20 = prices.rolling(20).mean() if len(prices) >= 20 else None
-        ma50 = prices.rolling(50).mean() if len(prices) >= 50 else None
-        ma200 = prices.rolling(200).mean() if len(prices) >= 200 else None
-
-        st.write(prices.rolling(20).mean().dropna())
-        st.write(prices.rolling(50).mean().dropna())
-        st.write(prices.rolling(200).mean().dropna())
+        ma20 = prices.rolling(20).mean().dropna()
+        ma50 = prices.rolling(50).mean().dropna()
+        ma200 = prices.rolling(200).mean().dropna()
 
         # Bollinger Bands (20d, 2 std)
-        if len(prices) >= 20:
-            std20 = prices.rolling(20).std()
-            upper_band = ma20 + (2 * std20)
-            lower_band = ma20 - (2 * std20)
-        else:
-            upper_band, lower_band = None, None
+
+        std20 = prices.rolling(20).std()
+        upper_band = ma20 + (2 * std20)
+        lower_band = ma20 - (2 * std20)
 
         # RSI (14d)
         if len(prices) >= 14:
@@ -187,36 +181,36 @@ def analyse_stock(row, period="12mo", interval="1h"):
         score = 0
 
         # Trend following
-        # if ma20 is not None and ma50 is not None and ma200 is not None:
-        #     if ma20.iloc[-1] > ma50.iloc[-1] > ma200.iloc[-1]:
-        #         score += 20
-        #     elif ma20.iloc[-1] < ma50.iloc[-1] < ma200.iloc[-1]:
-        #         score -= 20
-        #
+        if ma20 is not None and ma50 is not None and ma200 is not None:
+            if ma20.iloc[-1] > ma50.iloc[-1] > ma200.iloc[-1]:
+                score += 20
+            elif ma20.iloc[-1] < ma50.iloc[-1] < ma200.iloc[-1]:
+                score -= 20
+
         # # Bollinger breakout
-        # if upper_band is not None and lower_band is not None:
-        #     if prices.iloc[-1] > upper_band.iloc[-1]:
-        #         score += 15
-        #     elif prices.iloc[-1] < lower_band.iloc[-1]:
-        #         score -= 15
-        #
+        if upper_band is not None and lower_band is not None:
+            if prices.iloc[-1] > upper_band.iloc[-1]:
+                score += 15
+            elif prices.iloc[-1] < lower_band.iloc[-1]:
+                 score -= 15
+
         # # RSI
-        # if rsi_val is not None:
-        #     if rsi_val > 70:
-        #         score -= 10  # overbought
-        #     elif rsi_val < 30:
-        #         score += 10  # oversold
-        #
+        if rsi_val is not None:
+            if rsi_val > 70:
+                score -= 10  # overbought
+            elif rsi_val < 30:
+                score += 10  # oversold
+
         # # Volatility
-        # if volatility > 40:
-        #     score -= 5
-        #
+        if volatility > 40:
+            score -= 5
+
         # # Trend slope
-        # if slope_pct > 0.05 and r2 > 0.5:
-        #     score += 10
-        # elif slope_pct < -0.05 and r2 > 0.5:
-        #     score -= 10
-        #
+        if slope_pct > 0.05 and r2 > 0.5:
+            score += 10
+        elif slope_pct < -0.05 and r2 > 0.5:
+            score -= 10
+
         # --- Classification ---
         if score >= 25:
             signal = "🚀 Strong Bullish"
