@@ -141,9 +141,9 @@ def analyse_stock(row, period="12mo", interval="1h"):
 
         # --- Indicators ---
         # Moving averages (with guards)
-        ma20 = prices.rolling(20).dropna().mean() if len(prices) >= 20 else None
-        ma50 = prices.rolling(50).dropna().mean() if len(prices) >= 50 else None
-        ma200 = prices.rolling(200).dropna().mean() if len(prices) >= 200 else None
+        ma20 = prices.rolling(20).mean() if len(prices) >= 20 else None
+        ma50 = prices.rolling(50).mean() if len(prices) >= 50 else None
+        ma200 = prices.rolling(200).mean() if len(prices) >= 200 else None
 
 
         # Bollinger Bands (20d, 2 std)
