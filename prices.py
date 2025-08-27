@@ -200,11 +200,11 @@ def analyse_stock(row, period="6mo", interval="1d"):
                 score -= 20
 
         # Bollinger bands
-        if upper_band is not None and lower_band is not None:
-            if prices.iloc[-1] > upper_band.iloc[-1]:
-                score += 15
-            elif prices.iloc[-1] < lower_band.iloc[-1]:
-                score -= 15
+        # if upper_band is not None and lower_band is not None:
+        #     if prices.iloc[-1] > upper_band.iloc[-1]:
+        #         score += 15
+        #     elif prices.iloc[-1] < lower_band.iloc[-1]:
+        #         score -= 15
 
         rsi_last = rsi.iloc[-1] if not np.isnan(rsi.iloc[-1]) else 50
         if rsi_last > 70:
