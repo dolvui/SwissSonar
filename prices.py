@@ -158,10 +158,14 @@ def analyse_stock(row, period="6mo", interval="1d"):
 
         # Linear regression slope (trend strength)
         x = np.arange(len(prices))
-        slope, intercept, r_value, p_value, std_err = linregress(x, prices)
-        slope_pct = slope / prices.iloc[0] * 100
-        r2 = r_value**2
-
+        st.write(x)
+        try:
+            slope, intercept, r_value, p_value, std_err = linregress(x, prices)
+            slope_pct = slope / prices.iloc[0] * 100
+            r2 = r_value**2
+        except:
+            slope_pct = 0.5
+            r2 = 0.5
         # Volatility (% annualized)
         daily_ret = prices.pct_change().dropna()
         volatility = np.std(daily_ret) * np.sqrt(252) * 100

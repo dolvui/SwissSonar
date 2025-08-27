@@ -73,7 +73,7 @@ if "loaded" not in st.session_state:
 st.set_page_config(page_title="Analysis Dashboard", layout="wide", page_icon="📊")
 
 st.title("📊 Analysis Dashboard")
-
+st.divider()
 # ---- Dashboard Section ----
 st.subheader("Crypto Dashboard Overview")
 
