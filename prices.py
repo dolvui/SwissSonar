@@ -241,8 +241,8 @@ def analyse_stock(row, period="12mo", interval="1h"):
             elif rsi_val < 30:
                 comment.append("Oversold")
 
-        if volatility > 40:
-            comment.append("High volatility")
+        # if volatility > 40:
+        #     comment.append("High volatility")
 
         obj = {
             "symbol": symbol,
