@@ -122,7 +122,7 @@ def get_price_forex(symbol,buy_price):
         st.error('forex seems down !')
         return buy_price
 
-def analyse_stock(row, period="6mo", interval="1d"):
+def analyse_stock(row, period="12mo", interval="1d"):
     symbol, country = row
     symbol = yahoo_symbol(symbol, country)
     st.info(f"Starting analysis of {symbol}")
