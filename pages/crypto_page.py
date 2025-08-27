@@ -171,6 +171,12 @@ stocks = get_price_stocks(stock_symbols)
 # Convert list → DataFrame
 stocks = pd.DataFrame(stocks)
 
+scores = []
+for stock in stocks:
+    obj, report = analyse_stock(stock['symbol'],stock['country'])
+    scores.append(obj['signal_score'])
+stocks['score'] = scores
+
 search_stock_query = st.text_input("🔍 Search stock by name or symbol").lower()
 
 if search_stock_query:
