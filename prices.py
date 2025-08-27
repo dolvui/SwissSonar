@@ -246,7 +246,7 @@ def analyse_stock(row, period="12mo", interval="1h"):
             "latest_price": round(prices.iloc[-1], 2),
             "slope_pct": round(slope_pct, 3),
             "r2": round(r2, 2),
-            "volatility_pct": round(volatility, 2),
+            "volatility_pct": round(volatility[0], 2),
             "rsi": round(rsi_val, 2) if rsi_val else None,
             "signal_score": score,
             "signal": signal,
@@ -255,9 +255,9 @@ def analyse_stock(row, period="12mo", interval="1h"):
 
         report = f"""
         Symbol: {symbol}  
-        Latest price: {round(prices.iloc[-1], 2)}  
+        Latest price: {round(prices.iloc[-1][0], 2)}  
         Trend slope: {round(slope_pct, 3)}% (R²={round(r2, 2)})  
-        Volatility: {round(volatility, 2)}% annualized  
+        Volatility: {round(volatility[0], 2)}% annualized  
         RSI(14): {round(rsi_val, 2) if rsi_val else "N/A"}  
         Signal Score: {score}  
         Signal: {signal}  
