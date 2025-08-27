@@ -138,13 +138,14 @@ def analyse_stock(row, period="12mo", interval="1h"):
         df = df.dropna()
         prices = df["Close"]
         #volumes = df["Volume"]
-
+        st.info(f"process symbol : {symbol} with {len(prices)} values")
         # --- Indicators ---
         # Moving averages (with guards)
         ma20 = prices.rolling(20).mean() if len(prices) >= 20 else None
         ma50 = prices.rolling(50).mean() if len(prices) >= 50 else None
         ma200 = prices.rolling(200).mean() if len(prices) >= 200 else None
 
+        st.write(prices.rolling(20))
 
         # Bollinger Bands (20d, 2 std)
         if len(prices) >= 20:
