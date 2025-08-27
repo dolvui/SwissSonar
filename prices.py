@@ -183,16 +183,16 @@ def analyse_stock(row, period="12mo", interval="1h"):
         # Trend following
         if ma20 is not None and ma50 is not None and ma200 is not None:
             st.write(f"with iloc ->  20 : {ma20.iloc[-1][0]} , 50 : {ma50.iloc[-1][0]} , 200 : {ma200.iloc[-1][0]}")
-            if ma20.iloc[-1] > ma50.iloc[-1] > ma200.iloc[-1]:
+            if ma20.iloc[-1][0] > ma50.iloc[-1][0] > ma200.iloc[-1][0]:
                 score += 20
-            elif ma20.iloc[-1] < ma50.iloc[-1] < ma200.iloc[-1]:
+            elif ma20.iloc[-1][0] < ma50.iloc[-1][0] < ma200.iloc[-1][0]:
                 score -= 20
 
         # # Bollinger breakout
         if upper_band is not None and lower_band is not None:
-            if prices.iloc[-1] > upper_band.iloc[-1]:
+            if prices.iloc[-1][0] > upper_band.iloc[-1][0]:
                 score += 15
-            elif prices.iloc[-1] < lower_band.iloc[-1]:
+            elif prices.iloc[-1][0] < lower_band.iloc[-1][0]:
                  score -= 15
 
         # # RSI
@@ -239,8 +239,8 @@ def analyse_stock(row, period="12mo", interval="1h"):
             elif rsi_val < 30:
                 comment.append("Oversold")
 
-        # if volatility > 40:
-        #     comment.append("High volatility")
+        if volatility > 40:
+            comment.append("High volatility")
 
         obj = {
             "symbol": symbol,
