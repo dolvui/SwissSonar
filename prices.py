@@ -115,27 +115,20 @@ def get_price_stocks(stocks):
     for _, stock in ret_stocks.iterrows():
         try:
             obj, report = analyse_stock((stock['symbol'], stock['country']))
-            if obj and obj['signal_score']:
-                scores.append(obj['signal_score'])
-            else:
-                scores.append(0)
+            obj['signal_score']
+            obj["signal"]
+            obj["comment"]
+            obj["latest_price"]
 
-            if obj and obj["signal"]:
-                signals.append(obj["signal"])
-            else:
-                signals.append(0)
-
-            if obj and obj["comment"]:
-                comments.append(obj["comment"])
-            else:
-                comments.append(0)
-
-            if obj and obj["latest_price"]:
-                prices.append(obj["latest_price"])
-            else:
-                prices.append(0)
-        except Exception as e:
+            scores.append(obj['signal_score'])
+            signals.append(obj["signal"])
+            comments.append(obj["comment"])
+            prices.append(obj["latest_price"])
+        except:
             scores.append(0)
+            signals.append(0)
+            comments.append(0)
+            prices.append(0)
 
     ret_stocks['price'] = prices
     ret_stocks['score'] = scores
