@@ -140,6 +140,5 @@ if board_name:
 
 from datetime import datetime
 if int(datetime.now().timestamp()) % (60*5) == 0:
-    #info = st.info("refreshing")
     print("refresh page ?")
     st.rerun()
