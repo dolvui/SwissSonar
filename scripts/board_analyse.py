@@ -43,13 +43,14 @@ def analyse_board():
                         cg_data = fetch_token_price(id)
 
                     obj, report = analyse_token(ticker, cg_data, id)
+                    report += f"\nDelta : {item['delta']} \n"
                     results.append(obj)
-                    reports.append(report)
+                    reports.append(report) # send
 
     global_report = "\n".join(reports)
     peak_alerts = []
-    for obj in results:
-        if obj.get("signal") in ["🚨 Exceptional", "🔺 Strong"]:
-            peak_alerts.append(f"🚀 {obj['ticker']} looks hot! Score={obj['signal_score']}")
+    # for obj in results:
+    #     if obj.get("signal") in ["🚨 Exceptional", "🔺 Strong"]:
+    #         peak_alerts.append(f"🚀 {obj['ticker']} looks hot! Score={obj['signal_score']}")
 
     send_mail(global_report)
