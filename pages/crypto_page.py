@@ -193,19 +193,19 @@ with filter_stock3:
     # --- Signal filter ---
     if "signal" in filtered_df_stock.columns:
         st.write(filtered_df_stock["signal"])
-        available_signals = sorted(filtered_df_stock["signal"].dropna().unique())
+        available_signals = sorted(filtered_df_stock["signal"].dropna().astype(str).unique())
         selected_signals = st.multiselect(
             "📈 Filter by Signal", available_signals, default=available_signals
         )
-        filtered_df_stock = filtered_df_stock[filtered_df_stock["signal"].isin(selected_signals)]
+        filtered_df_stock = filtered_df_stock[filtered_df_stock["signal"].astype(str).isin(selected_signals)]
 with filter_stock4:
     # --- Comment filter ---
     if "comment" in filtered_df_stock.columns:
-        available_comments = sorted(filtered_df_stock["comment"].dropna().unique())
+        available_comments = sorted(filtered_df_stock["comment"].dropna().astype(str).unique())
         selected_comments = st.multiselect(
             "💬 Filter by Comment", available_comments, default=available_comments
         )
-        filtered_df_stock = filtered_df_stock[filtered_df_stock["comment"].isin(selected_comments)]
+        filtered_df_stock = filtered_df_stock[filtered_df_stock["comment"].astype(str).isin(selected_comments)]
 
 # table
 st.dataframe(filtered_df_stock, use_container_width=True)
