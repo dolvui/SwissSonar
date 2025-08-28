@@ -192,7 +192,7 @@ with filter_stock2:
 with filter_stock3:
     # --- Signal filter ---
     if "signal" in filtered_df_stock.columns:
-        st.write(filtered_df_stock["signal"])
+        #st.write(filtered_df_stock["signal"])
         available_signals = sorted(filtered_df_stock["signal"].dropna().astype(str).unique())
         selected_signals = st.multiselect(
             "📈 Filter by Signal", available_signals, default=available_signals
