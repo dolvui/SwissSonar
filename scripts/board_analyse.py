@@ -32,17 +32,17 @@ def analyse_board():
             if "provider" in rubrick and rubrick["provider"] == "crypto":
                 for item in rubrick["items"]:
                     ticker = item["symbol"]
-                    cg_data = fetch_token_price(ticker)
+                    id = cryptos_available[item["symbol"]]
+
+                    cg_data = fetch_token_price(id)
 
                     # handle rate limit
                     if "prices" not in cg_data:
                         from time import sleep
                         sleep(60)
-                        cg_data = fetch_token_price(ticker)
+                        cg_data = fetch_token_price(id)
 
-                    id = cryptos_available[item["symbol"]]
-                    print(item["symbol"], cg_data, id)
-                    obj, report = analyse_token(item["symbol"], cg_data, id)
+                    obj, report = analyse_token(ticker, cg_data, id)
                     results.append(obj)
                     reports.append(report)
 
