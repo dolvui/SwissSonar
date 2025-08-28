@@ -7,6 +7,7 @@ if __name__ == '__main__':
     parser.add_argument('--refresh-coins', metavar='boolean', required=False)
     parser.add_argument('--train', metavar='int', required=False)
     parser.add_argument('--tickers', metavar='string', required=False)
+    parser.add_argument('--board-analyse', metavar='boolean', required=False)
 
     args = parser.parse_args()
     #from sqliteModels import init_db
@@ -17,7 +18,10 @@ if __name__ == '__main__':
     if args.train:
         from scripts.model_trainner import launch_train_model
         launch_train_model(args.train,args.tickers)
-    if not args.train and not args.refresh_coins:
+    if args.board_analyse:
+        from scripts.board_analyse import analyse_board
+        analyse_board()
+    if not args.train and not args.refresh_coins and not args.board_analyse:
         pages = {
             "Home": [
                 st.Page("pages/home.py", title="Home page"),

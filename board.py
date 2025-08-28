@@ -13,6 +13,8 @@ client = MongoClient(MONGO_URI)
 db = client[DB_NAME]
 boards = db.boards
 
+def get_all_boards():
+    return boards.find()
 
 def get_board(board_name: str):
     board = boards.find_one({"board_name": board_name})

@@ -21,6 +21,20 @@ def price_slope(prices):
     slope, _, r_value, _, _ = linregress(x, prices)
     return float(slope), float(r_value**2)
 
+def detect_peak(prices, tolerance=0.02):
+    """
+    Detect if current price is within `tolerance` of recent peak.
+    Example: tolerance=0.02 means 2% below max.
+    """
+    if len(prices) < 10:
+        return False
+
+    max_price = max(prices[-50:])  # lookback 50 samples
+    current_price = prices[-1]
+
+    return current_price >= max_price * (1 - tolerance)
+
+
 def analyse_token(name, cg_data, ticker):
     prices = [p[1] for p in cg_data.get('prices', [])]
     volumes = [v[1] for v in cg_data.get('total_volumes', [])]
@@ -66,6 +80,8 @@ def analyse_token(name, cg_data, ticker):
     else:
         comment = "🔍 No clear pattern"
 
+    peak = detect_peak(prices)
+
     obj = {
         "name": name,
         "ticker": ticker,
@@ -76,7 +92,8 @@ def analyse_token(name, cg_data, ticker):
         "r2": round(r2, 2),
         "signal_score": round(score, 2),
         "signal": signal,
-        "comment": comment
+        "comment": comment,
+        "peak": peak
     }
 
     report = f"""

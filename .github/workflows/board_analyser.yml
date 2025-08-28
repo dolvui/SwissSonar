@@ -1,10 +1,7 @@
-name: Daily Refresh
+name: board_analyser.yml
 on:
-#  push:
-#    branches:
-#      - main
   schedule:
-    - cron: '0 6 * * *'
+    - cron: '*/10 * * * *'
 permissions:
   contents: write
 jobs:
@@ -19,7 +16,7 @@ jobs:
         with:
           python-version: '3.10'
       - run: pip install -r requirements.txt
-      - run: python main.py --refresh-coins="True"
+      - run: python main.py --board-analyse="True"
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
@@ -27,3 +24,6 @@ jobs:
           DB_NAME: ${{ secrets.DB_NAME }}
           GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
           USER_AGENT: ${{ secrets.USER_AGENT }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          MAIL_PASS: ${{ secrets.MAIL_PASS }}

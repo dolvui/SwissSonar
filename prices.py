@@ -123,7 +123,7 @@ def get_price_stocks(stocks):
             scores.append(obj['signal_score'])
             signals.append(obj["signal"])
             comments.append(obj["comment"])
-            prices.append(obj["latest_price"])
+            prices.append(obj["latest_price"][0])
         except:
             scores.append(0)
             signals.append(0)
