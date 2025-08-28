@@ -27,8 +27,7 @@ def analyse_board():
     global_report = ""
     for board in boards:
         for rubrick in board["rubricks"]:
-            print(rubrick)
-            if rubrick["provider"] == "crypto":
+            if "provider" in rubrick and rubrick["provider"] == "crypto":
                 for item in rubrick["items"]:
                     ticker = item["symbol"]
                     cg_data = fetch_token_price(ticker)
@@ -49,4 +48,4 @@ def analyse_board():
         if obj.get("signal") in ["🚨 Exceptional", "🔺 Strong"]:
             peak_alerts.append(f"🚀 {obj['ticker']} looks hot! Score={obj['signal_score']}")
 
-    #send_mail(global_report)
+    send_mail(global_report)
