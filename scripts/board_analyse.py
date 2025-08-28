@@ -16,7 +16,7 @@ def send_mail(global_report):
     msg["To"] = to_email
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.starttls()
+        #server.starttls()
         server.login(smtp_user, smtp_pass)
         server.sendmail(smtp_user, to_email, msg.as_string())
 
