@@ -4,6 +4,7 @@ from coingeckoAPI import fetch_token_price
 import smtplib
 from email.mime.text import MIMEText
 import os
+from mongodb import fetch_token_24h
 
 def send_mail(global_report):
     to_email = os.environ["MAIL_TO"]
@@ -16,7 +17,6 @@ def send_mail(global_report):
     msg["To"] = to_email
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        #server.starttls()
         server.login(smtp_user, smtp_pass)
         server.sendmail(smtp_user, to_email, msg.as_string())
 
@@ -24,7 +24,9 @@ def analyse_board():
     boards = get_all_boards()
     results = []
     reports = []
-    global_report = ""
+
+    cryptos_available = {e['ticker']: e['gecko_id'] for e in fetch_token_24h()}
+
     for board in boards:
         for rubrick in board["rubricks"]:
             if "provider" in rubrick and rubrick["provider"] == "crypto":
@@ -38,7 +40,9 @@ def analyse_board():
                         sleep(60)
                         cg_data = fetch_token_price(ticker)
 
-                    obj, report = analyse_token("", cg_data, item["symbol"])
+                    id = cryptos_available[item["symbol"]]
+                    print(item["symbol"], cg_data, id)
+                    obj, report = analyse_token(item["symbol"], cg_data, id)
                     results.append(obj)
                     reports.append(report)
 
