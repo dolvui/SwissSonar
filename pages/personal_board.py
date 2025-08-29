@@ -92,7 +92,7 @@ else:
                     unsafe_allow_html=True
                 )
                 from random import randint
-                if st.button(f"❌", key=f"rm_{item['symbol']}_{rubrick['name']}_{randint(1,420)}"):
+                if st.button(f"❌", key=f"rm_{item['symbol']}_{rubrick['name']}"):
                     delete_item(board_name, rubrick["name"], item["symbol"])
                     st.rerun()
             st.write("➕ Add Investment")
