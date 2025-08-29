@@ -10,6 +10,9 @@ forex_available = ["USD", "EUR", "GBP", "JPY"]
 
 st.set_page_config(page_title="Personal Board", layout="wide", page_icon="👁️")
 
+if st.button("refresh the page"):
+    st.rerun()
+
 if "board_name" not in st.session_state:
     st.session_state["board_name"] = None
 
