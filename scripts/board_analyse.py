@@ -71,7 +71,7 @@ def build_reports(boards, cryptos_available):
 
     for board in boards:
         total_pnl, rubrick_results = compute_pnl(board, cryptos_available)
-        portfolio_summary.append(f"Board {board['name']} PnL: {round(total_pnl, 2)} USD")
+        portfolio_summary.append(f"Board {board['board_name']} PnL: {round(total_pnl, 2)} USD")
 
         for rubrick_name, rubrick_pnl, items in rubrick_results:
             for item in items:
