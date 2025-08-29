@@ -1,7 +1,7 @@
 name: board_analyser
 on:
-  schedule:
-    - cron: '*/10 * * * *'
+#  schedule:
+#    - cron: '*/10 * * * *'
 permissions:
   contents: write
 jobs:
