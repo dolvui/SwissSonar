@@ -31,6 +31,7 @@ def analyse_board():
         for rubrick in board["rubricks"]:
             if "provider" in rubrick and rubrick["provider"] == "crypto":
                 for item in rubrick["items"]:
+                    print(item)
                     ticker = item["symbol"]
                     id = cryptos_available[item["symbol"]]
 
