@@ -43,7 +43,7 @@ def analyse_board():
                         cg_data = fetch_token_price(id)
 
                     obj, report = analyse_token(ticker, cg_data, id)
-                    report += f"\nDelta : {item['delta']} \n"
+                    report = f"\n{report}Delta : {item['delta']} \n"
                     results.append(obj)
                     reports.append(report) # send
 
